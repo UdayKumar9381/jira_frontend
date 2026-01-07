@@ -1,0 +1,138 @@
+.backlog-container {
+    padding: 24px 40px;
+    height: 100%;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+.backlog-header {
+    margin-bottom: 24px;
+}
+
+.backlog-header h1 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #172b4d;
+    margin: 0;
+}
+
+.backlog-breadcrumbs {
+    font-size: 14px;
+    color: #5e6c84;
+    margin-bottom: 8px;
+}
+
+.sprint-container {
+    background-color: #f4f5f7;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    padding: 8px;
+}
+
+.sprint-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sprint-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sprint-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.sprint-dates {
+    font-size: 12px;
+    color: #5e6c84;
+}
+
+.sprint-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.sprint-stats {
+    display: flex;
+    gap: 8px;
+}
+
+.stat-badge {
+    background-color: #dfe1e6;
+    color: #172b4d;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 2px 8px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.stat-badge.todo {
+    background-color: #dfe1e6;
+}
+
+.stat-badge.inprogress {
+    background-color: #0052cc;
+    color: white;
+}
+
+.stat-badge.done {
+    background-color: #00875a;
+    color: white;
+}
+
+.sprint-issue-list {
+    min-height: 2px;
+    /* Allow dropping into empty list */
+    padding: 4px 0;
+}
+
+.backlog-section {
+    margin-top: 32px;
+}
+
+.backlog-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+}
+
+.backlog-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.create-sprint-btn {
+    background: none;
+    border: none;
+    color: #172b4d;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.create-sprint-btn:hover {
+    background-color: #ebecf0;
+}
+
+/* Empty State for DnD */
+.sprint-issue-list.is-dragging-over {
+    background-color: #ebecf0;
+    min-height: 40px;
+    border-radius: 3px;
+}

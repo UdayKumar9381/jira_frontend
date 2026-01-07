@@ -1,0 +1,22 @@
+.jira-layout {
+    display: flex;
+    min-height: 100vh;
+    padding-top: 56px;
+    /* Navbar height */
+}
+
+.jira-main-content {
+    flex: 1;
+    margin-left: 280px;
+    /* Sidebar width matched */
+    padding: 24px;
+    background-color: var(--ds-background-default);
+    min-width: 0;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.jira-main-content.collapsed {
+    margin-left: 64px;
+}

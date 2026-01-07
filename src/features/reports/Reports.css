@@ -1,0 +1,494 @@
+.reports-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+.reports-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 48px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid #f4f5f7;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header-left h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #172b4d;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.title-icon {
+    width: 28px;
+    height: 28px;
+    color: #fff;
+    background: linear-gradient(135deg, #0052cc, #00b8d9);
+    padding: 6px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 82, 204, 0.2);
+}
+
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid #dfe1e6;
+    background: #fff;
+    border-radius: 8px;
+    color: #42526e;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.export-btn:hover {
+    background: #f4f5f7;
+    color: #0052cc;
+    border-color: #c1c7d0;
+    transform: translateY(-1px);
+}
+
+.reports-content {
+    padding: 40px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.stat-card {
+    padding: 28px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(9, 30, 66, 0.08);
+    transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #dfe1e6;
+    opacity: 0.3;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(9, 30, 66, 0.12);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon.todo {
+    background: #f4f5f7;
+    color: #42526e;
+}
+
+.stat-icon.progress {
+    background: #deebff;
+    color: #0052cc;
+}
+
+.stat-icon.done {
+    background: #e3fcef;
+    color: #006644;
+}
+
+.stat-icon.total {
+    background: #eae6ff;
+    color: #403294;
+}
+
+.stat-info .stat-label {
+    font-size: 12px;
+    color: #6b778c;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.stat-info .stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #172b4d;
+    line-height: 1;
+}
+
+/* Charts */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 40px;
+}
+
+.chart-card {
+    background: #fff;
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(9, 30, 66, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.chart-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.chart-card h3 {
+    font-size: 18px;
+    color: #172b4d;
+    margin: 0;
+    font-weight: 700;
+}
+
+.chart-subtitle {
+    font-size: 13px;
+    color: #6b778c;
+    font-weight: 500;
+}
+
+.chart-container.circle-outer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 64px;
+    min-height: 240px;
+}
+
+.donut-wrapper {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.donut-chart-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.donut-segment {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.donut-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.donut-center .total-num {
+    font-size: 36px;
+    font-weight: 700;
+    color: #172b4d;
+    line-height: 1;
+}
+
+.donut-center .total-label {
+    font-size: 12px;
+    color: #6b778c;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.chart-legend-modern {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+}
+
+.legend-item-v2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.legend-item-v2 .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.legend-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.legend-info .label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #42526e;
+}
+
+.legend-info .percent {
+    font-size: 12px;
+    color: #6b778c;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.legend-item-v2 .count {
+    font-size: 14px;
+    font-weight: 700;
+    color: #172b4d;
+    min-width: 24px;
+    text-align: right;
+}
+
+/* Priority Cards Redesign */
+.priority-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    min-height: 200px;
+}
+
+.priority-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #ebecf0;
+}
+
+.priority-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.priority-high {
+    background: linear-gradient(180deg, #fff 0%, #fff5f5 100%);
+    border-color: #ffebe6;
+}
+
+.priority-high .priority-icon-wrapper {
+    color: #ff5630;
+    background: #ffebe6;
+}
+
+.priority-high .priority-count {
+    color: #bf2600;
+}
+
+.priority-medium {
+    background: linear-gradient(180deg, #fff 0%, #fffcf5 100%);
+    border-color: #fffae6;
+}
+
+.priority-medium .priority-icon-wrapper {
+    color: #ffab00;
+    background: #fff0b3;
+}
+
+.priority-medium .priority-count {
+    color: #172b4d;
+}
+
+.priority-low {
+    background: linear-gradient(180deg, #fff 0%, #f5faff 100%);
+    border-color: #deebff;
+}
+
+.priority-low .priority-icon-wrapper {
+    color: #0065ff;
+    background: #deebff;
+}
+
+.priority-low .priority-count {
+    color: #0747a6;
+}
+
+.priority-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.priority-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 1;
+}
+
+.priority-count {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+.priority-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6b778c;
+    letter-spacing: 0.5px;
+}
+
+.priority-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: rgba(9, 30, 66, 0.05);
+}
+
+.p-bar {
+    height: 100%;
+    background: currentColor;
+    opacity: 0.2;
+    /* Subtler background bar */
+}
+
+/* Use pseudo-elements or specific coloring for the bar if needed, 
+   but simplistic approach: */
+.priority-high .p-bar {
+    background: #ff5630;
+    opacity: 1;
+    width: 100%;
+    transform-origin: bottom;
+    position: absolute;
+    bottom: 0;
+}
+
+/* Actually, I planned vertical indicator in JSX style={{height: percent}} 
+   Let's adjust CSS to match the JSX structure: 
+   <div className="priority-indicator"><div className="p-bar" style={{ height: `${percent}%` }}></div></div> 
+   Wait, if it's horizontal at bottom? No, I want vertical fill maybe?
+   Let's stick to a bottom bar for simplicity but width=100% is boring.
+   Let's make it a background fill opacity or similar.
+   Actually, the JSX has `style={{ height: percent }}`... so it expects a vertical bar.
+   Let's place it on the side or background.
+*/
+
+.priority-indicator {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 6px;
+    height: 100%;
+    /* Full height of card */
+    background: transparent;
+}
+
+.p-bar {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: inherit;
+    /* Fallback */
+    border-radius: 3px 3px 0 0;
+    opacity: 0.3;
+}
+
+.priority-high .p-bar {
+    background: #ff5630;
+}
+
+.priority-medium .p-bar {
+    background: #ffab00;
+}
+
+.priority-low .p-bar {
+    background: #0065ff;
+}
+
+
+.reports-loading {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: #0052cc;
+    background: #fff;
+    letter-spacing: -0.5px;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

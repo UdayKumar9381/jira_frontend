@@ -1,0 +1,181 @@
+.jira-sidebar {
+    width: 280px;
+    background-color: #f4f5f7;
+    border-right: 1px solid #dfe1e6;
+    height: calc(100vh - 56px);
+    position: fixed;
+    left: 0;
+    top: 56px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.jira-sidebar.collapsed {
+    width: 64px;
+}
+
+.jira-sidebar-content-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 24px;
+}
+
+.jira-sidebar-content-scrollable::-webkit-scrollbar {
+    width: 4px;
+}
+
+.jira-sidebar-content-scrollable::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.jira-sidebar-content-scrollable:hover::-webkit-scrollbar-thumb {
+    background: #c1c7d0;
+}
+
+.jira-sidebar-project-header {
+    padding: 24px 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.jira-project-icon-lg {
+    min-width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #0052cc, #00b8d9);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 20px;
+    box-shadow: 0 4px 8px rgba(0, 82, 204, 0.15);
+}
+
+.jira-project-name {
+    font-weight: 600;
+    color: #172b4d;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.jira-project-type {
+    font-size: 12px;
+    color: #6b778c;
+    margin-top: 2px;
+    font-weight: 500;
+}
+
+.jira-sidebar-section {
+    margin-top: 8px;
+}
+
+.jira-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b778c;
+    padding: 16px 20px 8px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.jira-nav-item {
+    color: #42526e;
+    padding: 10px 16px;
+    margin: 2px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.jira-nav-item:hover {
+    background-color: rgba(9, 30, 66, 0.08);
+    color: #0052cc;
+    transform: translateX(4px);
+}
+
+.jira-nav-item.active {
+    background-color: #deebff;
+    color: #0052cc;
+    font-weight: 600;
+}
+
+.jira-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 4px;
+    background: #0052cc;
+    border-radius: 0 4px 4px 0;
+}
+
+.jira-nav-item svg {
+    color: #42526e;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+
+.jira-nav-item.active svg {
+    color: #0052cc;
+}
+
+.jira-badge-new {
+    background-color: #eae6ff;
+    color: #403294;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-weight: 700;
+    margin-left: auto;
+}
+
+.jira-sidebar-footer {
+    padding: 8px;
+    border-top: 1px solid #dfe1e6;
+    background: #f4f5f7;
+}
+
+.jira-sidebar-footer-collapse {
+    display: flex;
+    justify-content: center;
+}
+
+.jira-sidebar-footer-collapse .jira-nav-item {
+    width: 100%;
+    margin: 0;
+    justify-content: center;
+}
+
+.jira-sidebar-footer-text {
+    padding: 12px;
+    font-size: 11px;
+    color: #6b778c;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Global Sidebar */
+.jira-sidebar.global-sidebar {
+    background: #f4f5f7;
+}
+
+.jira-sidebar.global-sidebar .jira-nav-item.active {
+    background: #deebff;
+    color: #0052cc;
+}

@@ -1,0 +1,139 @@
+.jira-board-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.jira-board-header {
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.board-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.title-icon {
+    color: #4c9aff;
+}
+
+.jira-board-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #172b4d;
+    margin: 0;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.board-search {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    gap: 12px;
+    height: 40px;
+    background: white;
+    border: 1px solid #dfe1e6;
+    border-radius: 4px;
+}
+
+.glass-subtle {
+    /* Overriding previous glass style for a cleaner look or keeping it if preferred. 
+       Let's keep the existing glass class but refine layout */
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.board-search input {
+    border: none;
+    background: transparent;
+    width: 200px;
+    outline: none;
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.board-filters {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.create-issue-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+    height: 40px;
+    border-radius: 3px;
+    background: #0052cc;
+    color: #fff;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background 0.1s ease-out, box-shadow 0.1s cubic-bezier(0.47, 0.03, 0.49, 1.38);
+    border: none;
+    cursor: pointer;
+}
+
+.create-issue-btn:hover {
+    background: #0065ff;
+}
+
+.board-subtitle {
+    padding: 0 32px 16px 32px;
+    font-size: 14px;
+    color: #5e6c84;
+}
+
+.jira-board-canvas {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 0 32px 32px 32px;
+    box-sizing: border-box;
+}
+
+/* Custom Scrollbar for the Board Canvas */
+.jira-board-canvas::-webkit-scrollbar {
+    height: 8px;
+}
+
+.jira-board-canvas::-webkit-scrollbar-track {
+    background: #f4f5f7;
+    border-radius: 4px;
+}
+
+.jira-board-canvas::-webkit-scrollbar-thumb {
+    background: #c1c7d0;
+    border-radius: 4px;
+}
+
+.jira-board-canvas::-webkit-scrollbar-thumb:hover {
+    background: #a5adba;
+}

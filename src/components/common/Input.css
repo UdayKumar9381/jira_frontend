@@ -1,0 +1,52 @@
+.jira-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.jira-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ds-text-subtlest);
+    margin-bottom: 4px;
+}
+
+.jira-input {
+    height: 32px;
+    /* Standard Jira input height */
+    padding: 6px 8px;
+    background-color: var(--ds-background-input);
+    border: 1px solid var(--ds-border-input);
+    border-radius: 3px;
+    color: var(--ds-text);
+    font-size: 14px;
+    line-height: 20px;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.jira-input:hover {
+    background-color: var(--ds-background-neutral-subtle);
+}
+
+.jira-input:focus {
+    background-color: var(--ds-background-input);
+    border-color: #4c9aff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 154, 255, 0.2);
+}
+
+.jira-input-error {
+    border-color: #de350b;
+}
+
+.jira-input-error:focus {
+    outline: none;
+    border-color: #de350b;
+    box-shadow: 0 0 0 1px #de350b;
+}
+
+.jira-error-msg {
+    color: #de350b;
+    font-size: 11px;
+    margin-top: 4px;
+}

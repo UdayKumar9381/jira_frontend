@@ -1,0 +1,80 @@
+.jira-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(9, 30, 66, 0.54);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 80px;
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.jira-modal-content {
+    background: white;
+    border-radius: 3px;
+    box-shadow: var(--ds-shadow-overlay);
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 100px);
+    animation: slideIn 0.2s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.jira-modal-header {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--ds-border);
+}
+
+.jira-modal-header h3 {
+    font-size: 20px;
+    line-height: 24px;
+    color: var(--ds-text);
+}
+
+.jira-modal-close {
+    background: none;
+    border: none;
+    color: var(--ds-text-subtlest);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 3px;
+    display: flex;
+}
+
+.jira-modal-close:hover {
+    background-color: var(--ds-background-neutral);
+}
+
+.jira-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+}

@@ -1,0 +1,83 @@
+.jira-issue-card {
+    background-color: #fff;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(9, 30, 66, 0.2);
+    border: 1px solid transparent;
+    transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+    cursor: grab;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.jira-issue-card:hover {
+    background-color: #f4f5f7;
+    border-color: #dfe1e6;
+    box-shadow: 0 2px 4px rgba(9, 30, 66, 0.15);
+    transform: translateY(-1px);
+}
+
+.jira-issue-card.is-dragging {
+    background-color: #fff;
+    box-shadow: 0 12px 24px rgba(9, 30, 66, 0.3);
+    border-color: #4c9aff;
+    transform: rotate(2deg) scale(1.02);
+    z-index: 1000;
+}
+
+.jira-issue-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.jira-issue-title {
+    font-size: 14px;
+    color: #172b4d;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.jira-issue-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.jira-issue-metadata-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.jira-issue-key {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b778c;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.jira-issue-metadata-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.jira-avatar-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #dfe1e6;
+    color: #42526e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,204 @@
+.issue-detail-page {
+    max-width: 1400px;
+    /* Wider for the horizontal layout */
+    margin: 0 auto;
+    padding: 32px 40px;
+    background-color: #ffffff;
+    min-height: 100vh;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+.issue-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    border-bottom: 2px solid #ebecf0;
+    padding-bottom: 24px;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6b778c;
+    font-size: 14px;
+}
+
+.issue-title {
+    font-size: 28px;
+    font-weight: 500;
+    color: #172b4d;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Classic Info Grid (Top Section) */
+.classic-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    /* 3 Columns */
+    gap: 40px;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #ebecf0;
+}
+
+.info-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-column-header {
+    font-size: 13px;
+    font-weight: 700;
+    color: #42526e;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+}
+
+/* Field styling: Label on left/top, simpler */
+.info-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.field-label {
+    width: 100px;
+    color: #6b778c;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: right;
+    /* Aligned nicely */
+    flex-shrink: 0;
+}
+
+.field-value {
+    color: #172b4d;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Main Content (Bottom Section) */
+.classic-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    max-width: 900px;
+    /* Don't stretch text too wide */
+}
+
+.section-header {
+    font-size: 16px;
+    font-weight: 600;
+    color: #172b4d;
+    margin-bottom: 12px;
+}
+
+.description-text {
+    white-space: pre-wrap;
+    color: #172b4d;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+.attachment-box {
+    border: 1px solid #ebecf0;
+    border-radius: 4px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    max-width: fit-content;
+}
+
+.attachment-box:hover {
+    background-color: #f4f5f7;
+}
+
+.attachment-link {
+    color: #0052cc;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* Status Badges */
+.status-badge {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.status-todo {
+    background-color: #dfe1e6;
+    color: #42526e;
+}
+
+.status-inprogress {
+    background-color: #deebff;
+    color: #0052cc;
+}
+
+.status-review {
+    background-color: #eae6ff;
+    color: #403294;
+}
+
+.status-done {
+    background-color: #e3fcef;
+    color: #006644;
+}
+
+@media (max-width: 1024px) {
+    .classic-info-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .classic-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field-label {
+        text-align: left;
+        width: auto;
+    }
+}

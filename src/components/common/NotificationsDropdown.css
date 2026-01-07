@@ -1,0 +1,124 @@
+/* Normalized Jira-like Dropdown Styles */
+.jira-notification-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 380px;
+    max-height: 500px;
+    background: #ffffff;
+    border-radius: 3px;
+    box-shadow: 0 4px 8px -2px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-top: 8px;
+    border: 1px solid #dfe1e6;
+}
+
+.jira-notification-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #dfe1e6;
+    background-color: #f4f5f7;
+    font-size: 14px;
+    font-weight: 600;
+    color: #172b4d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.jira-notification-list {
+    overflow-y: auto;
+    max-height: 400px;
+    background-color: #fff;
+}
+
+.jira-notification-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid #ebecf0;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+}
+
+.jira-notification-item:hover {
+    background-color: #ebecf0;
+}
+
+.jira-notification-item.unread {
+    background-color: #e6fcff;
+    /* Very light blue highlight for unread */
+}
+
+.jira-notification-item.unread:hover {
+    background-color: #b3d4ff;
+}
+
+.jira-notification-item.unread::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: #0052cc;
+}
+
+.jira-notification-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #172b4d;
+    margin-bottom: 2px;
+}
+
+.jira-notification-message {
+    font-size: 13px;
+    color: #42526e;
+    line-height: 1.4;
+}
+
+.jira-notification-time {
+    font-size: 11px;
+    color: #6b778c;
+    margin-top: 4px;
+}
+
+.jira-notification-empty {
+    padding: 32px 20px;
+    text-align: center;
+    color: #6b778c;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.jira-notification-loading {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    color: #5e6c84;
+}
+
+/* Scrollbar styling */
+.jira-notification-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.jira-notification-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.jira-notification-list::-webkit-scrollbar-thumb {
+    background: #dfe1e6;
+    border-radius: 4px;
+}
+
+.jira-notification-list::-webkit-scrollbar-thumb:hover {
+    background: #c1c7d0;
+}

@@ -1,0 +1,52 @@
+.jira-board-column {
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+    min-width: 280px;
+    background-color: #f4f5f7;
+    border-radius: 8px;
+    max-height: 100%;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.jira-column-header {
+    padding: 16px 16px 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.jira-column-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6b778c;
+    text-transform: uppercase;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.6px;
+}
+
+.jira-column-count {
+    background-color: rgba(9, 30, 66, 0.08);
+    color: #42526e;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.jira-column-content {
+    padding: 0 8px 12px 8px;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 150px;
+    transition: background-color 0.2s ease;
+}
+
+.jira-column-content.is-dragging-over {
+    background-color: #ebecf0;
+}
