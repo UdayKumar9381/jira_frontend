@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import kietLogo from '../../assets/kiet-logo.png';
-import { formatError } from '../../utils/renderUtils';
-import './Auth.css';
+import './JiraAuth.css';
 
 export default function Login() {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -28,7 +27,7 @@ export default function Login() {
         setLoading(true);
         try {
             await login(form.email.toLowerCase(), form.password);
-            navigate("/dashboard"); // Redirect to workspace on success
+            navigate("/dashboard");
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.detail || err.message || "Invalid email or password");
@@ -38,33 +37,13 @@ export default function Login() {
     };
 
     return (
-        <div className="auth-container premium-bg">
-            <div className="auth-glass-card">
-                <div className="auth-header">
-                    <img src={kietLogo} alt="KIET" className="auth-logo-premium" style={{ height: '48px', width: 'auto' }} />
-                    <h1 className="auth-title">KIET</h1>
-                    <p className="auth-subtitle">Project Suite</p>
-                </div>
-
-                {message && <div className="auth-success-toast">{message}</div>}
-                {error && <div className="auth-error-toast">{formatError(error)}</div>}
-
-                <form onSubmit={handleSubmit} className="auth-form">
-                    <div className="auth-input-group">
-                        <label>Email Address</label>
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="name@company.com"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="auth-input-group">
-                        <div className="label-flex">
-                            <label>Password</label>
-                            <Link to="/forgot-password">Forgot?</Link>
+        <div className="jira-page-container">
+            <div className="jira-blue-header">
+                <div className="jira-header-container">
+                    <div className="jira-header-content">
+                        <div className="jira-logo-area">
+                            <img src={kietLogo} alt="KIET" className="jira-logo-img" />
+                            <span className="jira-logo-text">KIET</span>
                         </div>
                         <div className="jira-sub-header">Project Suite</div>
                     </div>
@@ -72,7 +51,6 @@ export default function Login() {
             </div>
 
             <div className="jira-content-wrapper">
-                {/* Left Side: Marketing Info */}
                 <div className="jira-marketing-col">
                     <div className="jira-illustration-placeholder">
                         <div className="jira-bar-1"></div>
@@ -89,10 +67,9 @@ export default function Login() {
                     </div>
                 </div>
 
-                {/* Right Side: Login Card */}
                 <div className="jira-form-card">
                     <h2 className="jira-card-header">Log in</h2>
-                    <p className="jira-card-sub-header">Continue to Jira Software</p>
+                    <p className="jira-card-sub-header">Continue to KIET Project Suite</p>
 
                     {message && <div className="jira-auth-success-toast">{message}</div>}
                     {error && <div className="jira-auth-error-toast">{error}</div>}

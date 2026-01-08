@@ -57,7 +57,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
                             <Layout size={20} title="View all projects" />
                             {!isCollapsed && <span>All Projects</span>}
                         </NavLink>
-                        {user?.role === 'ADMIN' && (
+                        {user?.is_master_admin && (
                             <NavLink to="/admin/users" className={({ isActive }) => `jira-nav-item ${isActive ? 'active' : ''}`}>
                                 <Settings size={20} title="User Management" />
                                 {!isCollapsed && <span>User Management</span>}

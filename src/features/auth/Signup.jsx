@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import kietLogo from '../../assets/kiet-logo.png';
-import { formatError } from '../../utils/renderUtils';
-import './Auth.css';
+import './JiraAuth.css';
 
 export default function Signup() {
     const [form, setForm] = useState({
@@ -19,7 +18,6 @@ export default function Signup() {
     const { signup } = useAuth();
     const navigate = useNavigate();
 
-    // Password Rules
     const rules = [
         { label: "At least 8 characters", valid: form.password.length >= 8 },
         { label: "One uppercase letter", valid: /[A-Z]/.test(form.password) },
@@ -46,16 +44,9 @@ export default function Signup() {
 
         setLoading(true);
         try {
-            // Register and auto-login (mapping full_name to username)
             await signup(form.full_name, form.email.toLowerCase(), form.password, form.role);
-            // After signup, we redirect to login to ensure they have a session, 
-            // but the user's snippet asked for /dashboard. 
-            // If the backend doesn't auto-login on signup, /dashboard will fail.
-            // I'll stick to the user's request of /dashboard for UI consistency, 
-            // but usually we'd want /login for safety unless we call login here.
             navigate("/login", { state: { message: "Signup successful! Please log in with your new account." } });
         } catch (err) {
-            console.error(err);
             const errorMessage = err.response?.data?.detail || err.message || "Unknown error";
             setPasswordError("Signup failed: " + errorMessage);
         } finally {
@@ -75,7 +66,6 @@ export default function Signup() {
 
     return (
         <div className="jira-page-container">
-            {/* Header / Background Strip */}
             <div className="jira-blue-header">
                 <div className="jira-header-container">
                     <div className="jira-header-content">
@@ -88,10 +78,7 @@ export default function Signup() {
                 </div>
             </div>
 
-            {/* Main Content Area */}
             <div className="jira-content-wrapper">
-
-                {/* Left Side: Marketing Info */}
                 <div className="jira-marketing-col">
                     <div className="jira-illustration-placeholder">
                         <div className="jira-bar-1"></div>
@@ -116,36 +103,37 @@ export default function Signup() {
                     </div>
                 </div>
 
-                {error && <div className="auth-error-toast">{formatError(error)}</div>}
+                <div className="jira-form-card">
+                    <h2 className="jira-card-header">Sign up</h2>
+                    <p className="jira-card-sub-header">Create your KIET Project Suite account</p>
+
+                    {passwordError && <div className="jira-auth-error-toast">{passwordError}</div>}
 
                     <form onSubmit={handleSubmit} className="jira-form-stack">
-                        {/* Full Name */}
                         <div className="jira-field-group">
                             <label className="jira-label">Full Name</label>
                             <input
                                 type="text"
                                 className="jira-input"
-                                placeholder="Enter full name"
+                                placeholder="Enter your full name"
                                 value={form.full_name}
                                 onChange={e => setForm({ ...form, full_name: e.target.value })}
                                 required
                             />
                         </div>
 
-                        {/* Work Email */}
                         <div className="jira-field-group">
                             <label className="jira-label">Work Email</label>
                             <input
                                 type="email"
                                 className="jira-input"
-                                placeholder="name@company.com"
+                                placeholder="Enter your email"
                                 value={form.email}
                                 onChange={e => setForm({ ...form, email: e.target.value })}
                                 required
                             />
                         </div>
 
-                        {/* Role Selection */}
                         <div className="jira-field-group">
                             <label className="jira-label">Role</label>
                             <select
@@ -159,57 +147,47 @@ export default function Signup() {
                             </select>
                         </div>
 
-                        {/* Password */}
                         <div className="jira-field-group">
                             <label className="jira-label">Password</label>
                             <input
                                 type="password"
                                 className="jira-input"
-                                placeholder="Create password"
+                                placeholder="Create a password"
                                 value={form.password}
                                 onChange={e => setForm({ ...form, password: e.target.value })}
                                 required
                             />
+                            {form.password && (
+                                <div className="jira-password-requirements">
+                                    <div className="jira-password-requirements-header">Password Requirements</div>
+                                    {rules.map((rule, index) => (
+                                        <div key={index} className="jira-rule-item">
+                                            <span className="jira-rule-check">
+                                                {rule.valid ? '✓' : '✗'}
+                                            </span>
+                                            <span style={{ color: rule.valid ? '#00875a' : '#de350b' }}>
+                                                {rule.label}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
-                        {/* Confirm Password */}
                         <div className="jira-field-group">
                             <label className="jira-label">Confirm Password</label>
                             <input
                                 type="password"
                                 className="jira-input"
-                                style={{
-                                    borderColor: passwordError && (passwordError.includes("match") || passwordError.includes("complexity")) ? "#de350b" : "#dfe1e6"
-                                }}
-                                placeholder="Confirm password"
+                                placeholder="Confirm your password"
                                 value={confirmPassword}
                                 onChange={handleConfirmChange}
                                 required
                             />
-                            {passwordError && <span className="jira-error-text">{passwordError}</span>}
                         </div>
 
-                        {/* Password Requirements Checklist */}
-                        {form.password && (
-                            <div className="jira-password-requirements">
-                                <p className="jira-password-requirements-header">Password Requirements</p>
-                                {rules.map((rule, idx) => (
-                                    <div key={idx} className="jira-rule-item" style={{ color: rule.valid ? "#006644" : "#42526e" }}>
-                                        <span className="jira-rule-check" style={{ color: rule.valid ? "#36b37e" : "#dfe1e6" }}>
-                                            {rule.valid ? "✓" : "○"}
-                                        </span>
-                                        {rule.label}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        <p className="jira-terms-text">
-                            By clicking below, you agree to the Atlassian Cloud Terms of Service and Privacy Policy.
-                        </p>
-
-                        <button type="submit" className="jira-submit-btn" disabled={loading}>
-                            {loading ? "Creating account..." : "Agree & Sign up"}
+                        <button type="submit" className="jira-submit-btn" disabled={loading || !allRulesMet}>
+                            {loading ? "Creating account..." : "Create account"}
                         </button>
                     </form>
 
@@ -220,7 +198,6 @@ export default function Signup() {
 
                     <div className="jira-no-credit-card">NO CREDIT CARD REQUIRED</div>
                 </div>
-
             </div>
         </div>
     );

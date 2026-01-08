@@ -24,6 +24,7 @@ const Navbar = ({ onCreateClick }) => {
     const [isProjectsOpen, setIsProjectsOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [recentProjects, setRecentProjects] = useState([]);
+    const [inactiveProjects, setInactiveProjects] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -63,6 +64,11 @@ const Navbar = ({ onCreateClick }) => {
             projectService.getAll().then(projects => {
                 setRecentProjects(projects.slice(0, 3));
             }).catch(err => console.error("Failed to fetch projects", err));
+
+            // Fetch Inactive Projects
+            projectService.getInactive().then(inactive => {
+                setInactiveProjects(inactive);
+            }).catch(err => console.error("Failed to fetch inactive projects", err));
         }
     }, [isProjectsOpen]);
 
@@ -163,6 +169,31 @@ const Navbar = ({ onCreateClick }) => {
                                                 <div className="jira-dropdown-item disabled">No recent projects</div>
                                             )}
                                         </div>
+                                    </>
+                                )}
+                                <div className="jira-dropdown-divider"></div>
+
+                                {/* Inactive Projects Section */}
+                                {inactiveProjects.length > 0 && (
+                                    <>
+                                        <div className="jira-dropdown-section">
+                                            <div className="jira-dropdown-header" style={{ color: '#ef4444' }}>Inactive Projects</div>
+                                            {inactiveProjects.map(project => (
+                                                <div
+                                                    key={project.id}
+                                                    className="jira-dropdown-item project-item"
+                                                    onClick={() => handleProjectClick(project.id)}
+                                                >
+                                                    <div className="jira-project-icon-sm" style={{ backgroundColor: '#9ca3af' }}>
+                                                        {project.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div className="jira-project-details-sm">
+                                                        <div className="name" style={{ textDecoration: 'line-through', color: '#6b7280' }}>{project.name}</div>
+                                                        <div className="type">Inactive</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                         <div className="jira-dropdown-divider"></div>
                                     </>
                                 )}
@@ -249,9 +280,7 @@ const Navbar = ({ onCreateClick }) => {
                                 user?.username?.charAt(0).toUpperCase() || <User size={16} />
                             )}
                         </div>
-                        <div className="jira-dropdown-chevron" style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-                            <ChevronDown size={14} />
-                        </div>
+
                     </div>
 
                     {isProfileOpen && (
@@ -285,10 +314,7 @@ const Navbar = ({ onCreateClick }) => {
                                     <User size={16} />
                                     <span>Profile</span>
                                 </div>
-                                <div className="jira-dropdown-item">
-                                    <Settings size={16} />
-                                    <span>Personal Settings</span>
-                                </div>
+
                             </div>
 
                             <div className="jira-dropdown-divider" />

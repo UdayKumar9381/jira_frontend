@@ -241,6 +241,15 @@ export const authService = {
         return response.data;
     },
 
+    verifyPassword: async (password) => {
+        const formData = new FormData();
+        formData.append('password', password);
+        const response = await api.post('/auth/verify-password', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return response.data;
+    },
+
     switchMode: async (mode) => {
         const formData = new FormData();
         formData.append('mode', mode);
@@ -294,10 +303,16 @@ export const projectService = {
         const formData = new FormData();
         if (data.name) formData.append('name', data.name);
         if (data.project_prefix) formData.append('project_prefix', data.project_prefix);
+        if (data.is_active !== undefined) formData.append('is_active', data.is_active);
 
         const response = await api.put(`${endpoints.projects}/${id}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
+        return response.data;
+    },
+
+    getInactive: async () => {
+        const response = await api.get(`${endpoints.projects}/inactive`);
         return response.data;
     },
 

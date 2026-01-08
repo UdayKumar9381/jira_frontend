@@ -159,6 +159,23 @@
     font-size: 14px;
     color: #172b4d;
     border-bottom: 1px solid #dfe1e6;
+    vertical-align: middle;
+}
+
+.jira-table .info-label {
+    width: 30%;
+    font-weight: 600;
+    color: #6b778c;
+    background-color: #fafbfc;
+    display: table-cell;
+    /* Ensure it stays a table cell */
+}
+
+.jira-table .info-value {
+    width: 70%;
+    display: table-cell;
+    /* Override display: flex from global class */
+    vertical-align: middle;
 }
 
 .jira-table tr:last-child td {

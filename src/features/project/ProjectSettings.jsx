@@ -4,7 +4,9 @@ import {
     Settings,
     Save,
     CheckCircle,
-    AlertTriangle
+    AlertTriangle,
+    ToggleLeft,
+    ToggleRight
 } from 'lucide-react';
 import { projectService } from '../../services/api';
 import './ProjectSettings.css';
@@ -12,7 +14,7 @@ import './ProjectSettings.css';
 const ProjectSettings = () => {
     const { projectId } = useParams();
     const navigate = useNavigate();
-    const [project, setProject] = useState({ name: '', project_prefix: '' });
+    const [project, setProject] = useState({ name: '', project_prefix: '', is_active: true });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState(null);
@@ -45,6 +47,29 @@ const ProjectSettings = () => {
         } catch (err) {
             console.error("Failed to update project", err);
             setMessage({ type: 'error', text: 'Failed to update project settings.' });
+        } finally {
+            setSaving(false);
+            setTimeout(() => setMessage(null), 3000);
+        }
+    };
+
+    const handleToggleActive = async () => {
+        if (!window.confirm(`Are you sure you want to ${project.is_active ? 'deactivate' : 'activate'} this project?`)) return;
+
+        setSaving(true);
+        setMessage(null);
+        try {
+            await projectService.update(projectId, {
+                is_active: !project.is_active
+            });
+            setProject(prev => ({ ...prev, is_active: !prev.is_active }));
+            setMessage({
+                type: 'success',
+                text: `Project ${project.is_active ? 'deactivated' : 'activated'} successfully.`
+            });
+        } catch (err) {
+            console.error("Failed to toggle project status", err);
+            setMessage({ type: 'error', text: 'Failed to update project status.' });
         } finally {
             setSaving(false);
             setTimeout(() => setMessage(null), 3000);
@@ -125,13 +150,36 @@ const ProjectSettings = () => {
                                 </div>
                             )}
 
-                            <div className="settings-footer">
-                                <button type="submit" className="btn-save btn-primary" disabled={saving}>
-                                    <Save size={16} />
-                                    {saving ? 'Saving...' : 'Save Changes'}
-                                </button>
-                                <button type="button" className="btn-cancel" onClick={() => navigate(-1)}>Cancel</button>
-                            </div>
+                            <button type="submit" className="btn-save btn-primary" disabled={saving}>
+                                <Save size={16} />
+                                {saving ? 'Saving...' : 'Save Changes'}
+                            </button>
+                            <button type="button" className="btn-cancel" onClick={() => navigate(-1)}>Cancel</button>
+
+                            <div style={{ flex: 1 }}></div>
+
+                            <button
+                                type="button"
+                                className={`btn-save ${project.is_active ? 'btn-danger' : 'btn-success'}`}
+                                style={{
+                                    padding: '12px 24px',
+                                    fontSize: '1.1rem',
+                                    fontWeight: 'bold',
+                                    backgroundColor: project.is_active ? '#ef4444' : '#10b981',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px'
+                                }}
+                                onClick={handleToggleActive}
+                                disabled={saving}
+                            >
+                                {project.is_active ? <ToggleRight size={24} /> : <ToggleLeft size={24} />}
+                                {project.is_active ? 'Deactivate Project' : 'Activate Project'}
+                            </button>
                         </form>
                     </div>
 
