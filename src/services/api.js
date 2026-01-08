@@ -186,6 +186,11 @@ export const authService = {
         );
         return response.data;
     },
+
+    getMyProjects: async () => {
+        const response = await api.get(endpoints.projects);
+        return response.data;
+    },
 };
 
 // --------------------------------------------------

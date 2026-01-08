@@ -227,15 +227,19 @@ const Navbar = ({ onCreateClick }) => {
 
 
                 <div className="jira-profile-wrapper" ref={profileRef}>
-                    <div className={`jira-profile-toggle ${isProfileOpen ? 'active' : ''}`}>
-                        <div className="jira-avatar" onClick={() => navigate('/profile')} title="View Profile" style={{ cursor: 'pointer' }}>
+                    <div
+                        className={`jira-profile-toggle ${isProfileOpen ? 'active' : ''}`}
+                        onClick={() => setIsProfileOpen(!isProfileOpen)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <div className="jira-avatar" title="View Profile">
                             {user?.profile_pic ? (
                                 <img src={`/api${user.profile_pic}`} alt="" className="avatar-img-navbar" />
                             ) : (
                                 user?.username?.charAt(0).toUpperCase() || <User size={16} />
                             )}
                         </div>
-                        <div className="jira-dropdown-chevron" onClick={() => setIsProfileOpen(!isProfileOpen)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', height: '100%' }}>
+                        <div className="jira-dropdown-chevron" style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
                             <ChevronDown size={14} />
                         </div>
                     </div>
