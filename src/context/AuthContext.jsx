@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { authService } from '../services/api';
-
-const AuthContext = createContext();
+import { AuthContext, useAuth } from './useAuth';
+export { useAuth };
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -44,17 +44,16 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    const switchMode = async (mode) => {
+        const data = await authService.switchMode(mode);
+        const userData = await authService.getMe();
+        setUser(userData);
+        return data;
+    };
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, signup, logout, checkAuth }}>
+        <AuthContext.Provider value={{ user, loading, login, signup, logout, checkAuth, switchMode }}>
             {children}
         </AuthContext.Provider>
     );
-};
-// Custom hook to use the AuthContext
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
 };

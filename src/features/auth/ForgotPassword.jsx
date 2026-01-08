@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { authService } from "../../services/api";
-import kietLogo from "../../assets/kiet-logo.png";
-import "./JiraAuth.css";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { authService } from '../../services/api';
+import kietLogo from '../../assets/kiet-logo.png';
+import { formatError } from '../../utils/renderUtils';
+import './Auth.css';
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -42,13 +43,19 @@ export default function ForgotPassword() {
                 </div>
             </div>
 
-            <div className="jira-content-wrapper">
-                {/* Left Side: Marketing Info */}
-                <div className="jira-marketing-col">
-                    <div className="jira-illustration-placeholder">
-                        <div className="jira-bar-1"></div>
-                        <div className="jira-bar-2"></div>
-                        <div className="jira-bar-3"></div>
+                {error && <div className="jira-reset-error">{formatError(error)}</div>}
+                {message && <div className="auth-success-toast">{message}</div>}
+
+                <form onSubmit={handleSubmit} className="auth-form">
+                    <div className="auth-input-group">
+                        <label>Email Address</label>
+                        <input
+                            type="email"
+                            placeholder="e.g. name@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
                     </div>
 
                     <h3 className="jira-marketing-title">Can't log in?</h3>

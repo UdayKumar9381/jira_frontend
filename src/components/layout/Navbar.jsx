@@ -139,42 +139,52 @@ const Navbar = ({ onCreateClick }) => {
 
                         {isProjectsOpen && (
                             <div className="jira-dropdown-menu">
-                                <div className="jira-dropdown-section">
-                                    <div className="jira-dropdown-header">Recent</div>
-                                    {recentProjects.length > 0 ? (
-                                        recentProjects.map(project => (
-                                            <div
-                                                key={project.id}
-                                                className="jira-dropdown-item project-item"
-                                                onClick={() => handleProjectClick(project.id)}
-                                            >
-                                                <div className="jira-project-icon-sm">
-                                                    {project.name.charAt(0).toUpperCase()}
-                                                </div>
-                                                <div className="jira-project-details-sm">
-                                                    <div className="name">{project.name}</div>
-                                                    <div className="type">Software project</div>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="jira-dropdown-item disabled">No recent projects</div>
-                                    )}
-                                </div>
-                                <div className="jira-dropdown-divider"></div>
+                                {!user?.is_master_admin && (
+                                    <>
+                                        <div className="jira-dropdown-section">
+                                            <div className="jira-dropdown-header">Recent</div>
+                                            {recentProjects.length > 0 ? (
+                                                recentProjects.map(project => (
+                                                    <div
+                                                        key={project.id}
+                                                        className="jira-dropdown-item project-item"
+                                                        onClick={() => handleProjectClick(project.id)}
+                                                    >
+                                                        <div className="jira-project-icon-sm">
+                                                            {project.name.charAt(0).toUpperCase()}
+                                                        </div>
+                                                        <div className="jira-project-details-sm">
+                                                            <div className="name">{project.name}</div>
+                                                            <div className="type">Software project</div>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="jira-dropdown-item disabled">No recent projects</div>
+                                            )}
+                                        </div>
+                                        <div className="jira-dropdown-divider"></div>
+                                    </>
+                                )}
                                 <div className="jira-dropdown-section">
                                     <div className="jira-dropdown-item" onClick={() => navigate('/projects')}>
                                         View all projects
                                     </div>
-                                    <div className="jira-dropdown-item" onClick={handleCreateProject}>
-                                        Create project
-                                    </div>
+                                    {!user?.is_master_admin && (
+                                        <div className="jira-dropdown-item" onClick={handleCreateProject}>
+                                            Create project
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
                     </div>
+
+                    {user?.is_master_admin && (
+                        <a href="#" className="jira-nav-link" onClick={(e) => { e.preventDefault(); navigate('/admin/users'); }}>User Management</a>
+                    )}
                 </nav>
-                {canCreateIssue() && (
+                {canCreateIssue() && !user?.is_master_admin && (
                     <Button variant="primary" onClick={onCreateClick}>Create</Button>
                 )}
             </div>

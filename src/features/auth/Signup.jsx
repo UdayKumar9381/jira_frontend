@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import kietLogo from "../../assets/kiet-logo.png";
-import "./JiraAuth.css";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import kietLogo from '../../assets/kiet-logo.png';
+import { formatError } from '../../utils/renderUtils';
+import './Auth.css';
 
 export default function Signup() {
     const [form, setForm] = useState({
@@ -115,10 +116,7 @@ export default function Signup() {
                     </div>
                 </div>
 
-                {/* Right Side: Signup Form Card */}
-                <div className="jira-form-card">
-                    <h2 className="jira-card-header">Get started</h2>
-                    <p className="jira-card-sub-header">Free for up to 10 users</p>
+                {error && <div className="auth-error-toast">{formatError(error)}</div>}
 
                     <form onSubmit={handleSubmit} className="jira-form-stack">
                         {/* Full Name */}

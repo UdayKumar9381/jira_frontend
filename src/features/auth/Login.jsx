@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import kietLogo from "../../assets/kiet-logo.png";
-import "./JiraAuth.css";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import kietLogo from '../../assets/kiet-logo.png';
+import { formatError } from '../../utils/renderUtils';
+import './Auth.css';
 
 export default function Login() {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -37,14 +38,33 @@ export default function Login() {
     };
 
     return (
-        <div className="jira-page-container">
-            {/* Header / Background Strip */}
-            <div className="jira-blue-header">
-                <div className="jira-header-container">
-                    <div className="jira-header-content">
-                        <div className="jira-logo-area">
-                            <img src={kietLogo} alt="KIET" className="jira-logo-img" />
-                            <span className="jira-logo-text">KIET</span>
+        <div className="auth-container premium-bg">
+            <div className="auth-glass-card">
+                <div className="auth-header">
+                    <img src={kietLogo} alt="KIET" className="auth-logo-premium" style={{ height: '48px', width: 'auto' }} />
+                    <h1 className="auth-title">KIET</h1>
+                    <p className="auth-subtitle">Project Suite</p>
+                </div>
+
+                {message && <div className="auth-success-toast">{message}</div>}
+                {error && <div className="auth-error-toast">{formatError(error)}</div>}
+
+                <form onSubmit={handleSubmit} className="auth-form">
+                    <div className="auth-input-group">
+                        <label>Email Address</label>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="name@company.com"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="auth-input-group">
+                        <div className="label-flex">
+                            <label>Password</label>
+                            <Link to="/forgot-password">Forgot?</Link>
                         </div>
                         <div className="jira-sub-header">Project Suite</div>
                     </div>

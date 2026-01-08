@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { storyService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import AdminDashboard from './AdminDashboard';
 import './ListView.css';
 
 const YourWork = () => {
@@ -119,6 +120,10 @@ const YourWork = () => {
     }
 
     const groupedStories = groupStories();
+
+    if (user?.is_master_admin) {
+        return <AdminDashboard />;
+    }
 
     return (
         <div className="list-view-container">

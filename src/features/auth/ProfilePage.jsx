@@ -1,16 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/api';
-import { Camera, Edit2, Save, X, Loader2, User, Shield, Briefcase } from 'lucide-react';
+import { Camera, Edit2, Save, X, Loader2 } from 'lucide-react';
+import { formatError } from '../../utils/renderUtils';
+import ModeSwitchRequestModal from './ModeSwitchRequestModal';
 import './ProfilePage.css';
 
 const ProfilePage = () => {
-    const { user: currentUser, checkAuth } = useAuth();
+    const { user, checkAuth, switchMode } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
     const [isChangingPassword, setIsChangingPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [projects, setProjects] = useState([]);
-    const [projectsLoading, setProjectsLoading] = useState(true);
+    const [switchingMode, setSwitchingMode] = useState(false);
     const [formData, setFormData] = useState({
         username: currentUser?.username || '',
         email: currentUser?.email || '',
@@ -94,28 +95,17 @@ const ProfilePage = () => {
         }
     };
 
-    const handleUpdatePassword = async (e) => {
-        e.preventDefault();
-        if (passwordData.newPassword !== passwordData.confirmPassword) {
-            setError('Passwords do not match');
-            return;
-        }
+    const [showRequestModal, setShowRequestModal] = useState(null);
 
-        setLoading(true);
-        setError('');
-        setSuccess('');
+    const handleSwitchMode = (mode) => {
+        if (user.view_mode === mode) return;
+        setShowRequestModal(mode);
+    };
 
-        try {
-            await authService.updateProfile({ password: passwordData.newPassword });
-            await checkAuth();
-            setSuccess('Password updated successfully');
-            setIsChangingPassword(false);
-            setPasswordData({ newPassword: '', confirmPassword: '' });
-        } catch (err) {
-            setError(err.response?.data?.detail || 'Failed to update password');
-        } finally {
-            setLoading(false);
-        }
+    const onRequestSuccess = () => {
+        setShowRequestModal(null);
+        setSuccess('Your request has been sent to the Master Admin for approval.');
+        setTimeout(() => setSuccess(''), 5000);
     };
 
     return (
@@ -150,103 +140,37 @@ const ProfilePage = () => {
                             </div>
                         </div>
 
-                        {error && !isChangingPassword && <div className="profile-alert error">{error}</div>}
-                        {success && !isChangingPassword && <div className="profile-alert success">{success}</div>}
-
-                        <div className="profile-body" style={{ padding: 0, marginTop: 24 }}>
-                            <div className="avatar-section" style={{ marginBottom: 32, display: 'flex', alignItems: 'center', gap: 24 }}>
-                                <div className="profile-avatar-container">
-                                    <div className="profile-avatar-large" onClick={handleAvatarClick}>
-                                        {currentUser.profile_pic ? (
-                                            <img src={`/api${currentUser.profile_pic}`} alt={currentUser.username} className="avatar-img" />
-                                        ) : (
-                                            currentUser.username.charAt(0).toUpperCase()
-                                        )}
-                                        <div className="avatar-overlay">
-                                            <Camera size={24} />
-                                        </div>
-                                    </div>
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        style={{ display: 'none' }}
-                                        accept="image/*"
-                                        onChange={handleFileChange}
-                                    />
-                                </div>
-                                <div>
-                                    <h4 style={{ margin: 0, fontSize: '18px', color: '#172b4d' }}>{currentUser.username}</h4>
-                                    <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#6b778c' }}>{currentUser.role}</p>
-                                </div>
+                    <div className="profile-title-area">
+                        <div className="profile-name-row">
+                            <div className="name-with-banner">
+                                <h1>{user.username}</h1>
+                                {user.is_master_admin && (
+                                    <span className="master-admin-badge" title="Full System Access">
+                                        🛡️ Master Administrator
+                                    </span>
+                                )}
                             </div>
-
-                            {isEditing ? (
-                                <form onSubmit={handleSubmit} className="profile-edit-form">
-                                    <div className="form-group">
-                                        <label className="jira-label">Username</label>
-                                        <input
-                                            type="text"
-                                            name="username"
-                                            value={formData.username}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="jira-label">Email Address</label>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-actions">
-                                        <button type="button" className="cancel-btn" onClick={() => setIsEditing(false)}>
-                                            <X size={16} /> Cancel
-                                        </button>
-                                        <button type="submit" className="save-btn" disabled={loading}>
-                                            {loading ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-                                            Save Changes
-                                        </button>
-                                    </div>
-                                </form>
-                            ) : (
-                                <div className="info-grid">
-                                    <div className="info-item">
-                                        <label className="jira-label">Full Name</label>
-                                        <div className="info-value">{currentUser?.username}</div>
-                                    </div>
-                                    <div className="info-item">
-                                        <label className="jira-label">Email Address</label>
-                                        <div className="info-value">
-                                            {currentUser?.email}
-                                            <span className="verified-badge">Verified</span>
-                                        </div>
-                                    </div>
-                                    <div className="info-item">
-                                        <label className="jira-label">System Role</label>
-                                        <div className="info-value">{currentUser?.role}</div>
-                                    </div>
-                                    <div className="info-item">
-                                        <label className="jira-label">Member Since</label>
-                                        <div className="info-value">
-                                            {currentUser?.created_at ? new Date(currentUser.created_at).toLocaleDateString() : 'N/A'}
-                                        </div>
-                                    </div>
-                                </div>
+                            {!isEditing && (
+                                <button className="edit-profile-btn" onClick={() => setIsEditing(true)}>
+                                    <Edit2 size={16} /> Edit Profile
+                                </button>
                             )}
                         </div>
                     </div>
                 </div>
 
-                {/* Security Section */}
-                <div className="profile-card glass profile-danger-zone">
-                    <div className="section-header">
-                        <h3>Security</h3>
-                        <p>Manage your password and authentication methods.</p>
+                {user.is_master_admin && (
+                    <div className="master-admin-banner">
+                        <div className="banner-icon">🛡️</div>
+                        <div className="banner-content">
+                            <h3>Master Administrator</h3>
+                            <p>You have full access to all projects and users in the system.</p>
+                        </div>
                     </div>
+                )}
+
+                {error && <div className="profile-alert error">{formatError(error)}</div>}
+                {success && <div className="profile-alert success">{success}</div>}
 
                     {error && isChangingPassword && <div className="profile-alert error" style={{ marginTop: 16 }}>{error}</div>}
                     {success && isChangingPassword && <div className="profile-alert success" style={{ marginTop: 16 }}>{success}</div>}
@@ -286,16 +210,69 @@ const ProfilePage = () => {
                             </div>
                         </form>
                     ) : (
-                        <div className="danger-content" style={{ marginTop: 24 }}>
-                            <div>
-                                <h4 style={{ fontSize: '14px', fontWeight: 600, margin: 0 }}>Password</h4>
-                                <p style={{ fontSize: '13px', color: '#6b778c', marginTop: 4 }}>
-                                    Last changed: {currentUser?.updated_at ? new Date(currentUser.updated_at).toLocaleDateString() : (currentUser?.created_at ? new Date(currentUser.created_at).toLocaleDateString() : 'N/A')}
-                                </p>
-                            </div>
-                            <button className="edit-profile-btn" onClick={() => setIsChangingPassword(true)}>
-                                Change Password
-                            </button>
+                        <div className="profile-details">
+                            {!user.is_master_admin && (
+                                <section className="profile-section mode-switch-section">
+                                    <h3>View Mode</h3>
+                                    <p className="mode-description">
+                                        Switch between roles to manage your own projects or view assigned tasks.
+                                    </p>
+                                    <div className="mode-toggle-group">
+                                        <button
+                                            className={`mode-btn ${user.view_mode === 'DEVELOPER' ? 'active' : ''}`}
+                                            onClick={() => handleSwitchMode('DEVELOPER')}
+                                            disabled={switchingMode}
+                                        >
+                                            <div className="mode-btn-content">
+                                                <span className="mode-icon">👨‍💻</span>
+                                                <div className="mode-text">
+                                                    <span className="mode-label">Developer Mode</span>
+                                                    <span className="mode-sublabel">See projects where you're assigned</span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                        <button
+                                            className={`mode-btn ${user.view_mode === 'ADMIN' ? 'active' : ''}`}
+                                            onClick={() => handleSwitchMode('ADMIN')}
+                                            disabled={switchingMode}
+                                        >
+                                            <div className="mode-btn-content">
+                                                <span className="mode-icon">🏗️</span>
+                                                <div className="mode-text">
+                                                    <span className="mode-label">Admin Mode</span>
+                                                    <span className="mode-sublabel">See projects you own/created</span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </section>
+                            )}
+
+                            <section className="profile-section">
+                                <h3>Account Information</h3>
+                                <div className="info-grid">
+                                    <div className="info-item">
+                                        <label>User ID</label>
+                                        <p>{user.id}</p>
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Username</label>
+                                        <p>{user.username}</p>
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Email</label>
+                                        <p>{user.email}</p>
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Joined</label>
+                                        <p>{new Date(user.created_at).toLocaleDateString(undefined, {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        })}</p>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                     )}
                 </div>
@@ -349,6 +326,13 @@ const ProfilePage = () => {
                     </div>
                 </div>
             </div>
+            {showRequestModal && (
+                <ModeSwitchRequestModal
+                    requestedMode={showRequestModal}
+                    onClose={() => setShowRequestModal(null)}
+                    onSuccess={onRequestSuccess}
+                />
+            )}
         </div>
     );
 };

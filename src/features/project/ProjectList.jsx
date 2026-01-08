@@ -3,6 +3,7 @@ import { projectService, storyService } from '../../services/api';
 import CreateProjectModal from './CreateProjectModal';
 import Button from '../../components/common/Button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './ProjectList.css';
 import {
     Hash,
@@ -15,6 +16,7 @@ import {
 } from 'lucide-react';
 
 const ProjectList = () => {
+    const { user } = useAuth();
     const [projects, setProjects] = useState([]);
     const [projectStats, setProjectStats] = useState({});
     const [loading, setLoading] = useState(true);
@@ -84,7 +86,9 @@ const ProjectList = () => {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    <Button onClick={() => setIsModalOpen(true)} variant="primary">Create Project</Button>
+                    {user?.view_mode === 'ADMIN' && !user?.is_master_admin && (
+                        <Button onClick={() => setIsModalOpen(true)} variant="primary">Create Project</Button>
+                    )}
                 </div>
             </header>
 
@@ -147,7 +151,13 @@ const ProjectList = () => {
                             <Layers size={48} color="#dfe1e6" />
                             <h3>No projects found</h3>
                             <p>Get started by creating your first project.</p>
-                            <Button onClick={() => setIsModalOpen(true)} variant="primary">New Project</Button>
+                            {user?.view_mode === 'ADMIN' ? (
+                                <Button onClick={() => setIsModalOpen(true)} variant="primary">New Project</Button>
+                            ) : (
+                                <p style={{ fontSize: '13px', color: '#6b778c', marginTop: '10px' }}>
+                                    Switch to <strong>Admin Mode</strong> in your profile to create a project.
+                                </p>
+                            )}
                         </div>
                     )}
                 </div>

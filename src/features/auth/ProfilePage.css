@@ -399,3 +399,130 @@
 .animate-spin {
     animation: spin 1s linear infinite;
 }
+
+/* Master Admin Styles */
+.name-with-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.master-admin-badge {
+    background: #ffecad;
+    color: #725a03;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    width: fit-content;
+    border: 1px solid #ffab00;
+}
+
+.master-admin-banner {
+    background: #f4f5f7;
+    border-left: 4px solid #0052cc;
+    margin: 20px 40px 0;
+    padding: 16px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    border-radius: 4px;
+}
+
+.banner-icon {
+    font-size: 24px;
+}
+
+.banner-content h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    color: #172b4d;
+}
+
+.banner-content p {
+    margin: 0;
+    font-size: 14px;
+    color: #5e6c84;
+}
+
+/* Mode Switch Section */
+.mode-switch-section {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #ebecf0;
+}
+
+.profile-section h3 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    color: #172b4d;
+}
+
+.mode-description {
+    color: #5e6c84;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.mode-toggle-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.mode-btn {
+    background: white;
+    border: 2px solid #dfe1e6;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.mode-btn:hover:not(:disabled) {
+    border-color: #4c9aff;
+    background: #f0f7ff;
+}
+
+.mode-btn.active {
+    border-color: #0052cc;
+    background: #f0f7ff;
+    box-shadow: 0 0 0 1px #0052cc;
+}
+
+.mode-btn-content {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.mode-icon {
+    font-size: 24px;
+}
+
+.mode-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.mode-label {
+    font-weight: 600;
+    color: #172b4d;
+    font-size: 14px;
+}
+
+.mode-sublabel {
+    font-size: 12px;
+    color: #6b778c;
+}
+
+.mode-btn.active .mode-label {
+    color: #0052cc;
+}
+
+.mode-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

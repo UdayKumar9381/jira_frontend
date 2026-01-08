@@ -1,0 +1,290 @@
+.admin-dashboard-container {
+    padding: 32px;
+    background-color: #f4f5f7;
+    min-height: calc(100vh - 64px);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #dfe1e6;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.full-row {
+    grid-column: span 12;
+}
+
+/* Stat Card */
+.stat-card {
+    grid-column: span 3;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.projects-icon {
+    background: #e6efff;
+    color: #0052cc;
+}
+
+.card-content h3 {
+    margin: 0;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #6b778c;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #172b4d;
+    margin: 4px 0;
+}
+
+.card-content p {
+    margin: 0;
+    font-size: 12px;
+    color: #5e6c84;
+}
+
+/* Chart Card */
+.chart-card {
+    grid-column: span 6;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-left h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.week-dropdown {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #dfe1e6;
+    font-size: 12px;
+    background: #f4f5f7;
+    color: #42526e;
+    outline: none;
+}
+
+.chart-wrapper {
+    height: 220px;
+    width: 100%;
+}
+
+/* Admin Creators Card */
+.admin-creators-card {
+    grid-column: span 3;
+}
+
+.admins-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.admin-project-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f4f5f7;
+}
+
+.admin-avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #0052cc;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.admin-info {
+    flex: 1;
+}
+
+.admin-info .name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.admin-info .email {
+    font-size: 11px;
+    color: #6b778c;
+}
+
+.projects-count-badge {
+    background: #ebecf0;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #42526e;
+}
+
+/* History Card */
+.history-card .header-subtitle {
+    margin: 4px 0 0 30px;
+    font-size: 13px;
+    color: #5e6c84;
+}
+
+.history-table-wrapper {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table th {
+    text-align: left;
+    padding: 12px 16px;
+    background: #f4f5f7;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #5e6c84;
+}
+
+.history-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f4f5f7;
+}
+
+.user-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-cell strong {
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.user-cell span {
+    font-size: 12px;
+    color: #6b778c;
+}
+
+.mode-badge {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.mode-badge.admin {
+    background: #ffecf0;
+    color: #bf2600;
+}
+
+.mode-badge.developer {
+    background: #e3fcef;
+    color: #006644;
+}
+
+.status-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-badge.approved {
+    background: #e3fcef;
+    color: #006644;
+}
+
+.status-badge.rejected {
+    background: #ffebe6;
+    color: #bf2600;
+}
+
+.status-badge.pending {
+    background: #fff0b3;
+    color: #854600;
+}
+
+.date-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #5e6c84;
+}
+
+.reason-cell p {
+    margin: 0;
+    font-size: 13px;
+    color: #172b4d;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* States */
+.admin-dashboard-loading {
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #5e6c84;
+}
+
+.admin-dashboard-loading p {
+    margin-top: 16px;
+}
+
+.admin-dashboard-error {
+    color: #de350b;
+    padding: 40px;
+    text-align: center;
+}

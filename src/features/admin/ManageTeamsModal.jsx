@@ -109,11 +109,13 @@ const ManageTeamsModal = ({ project, onClose }) => {
                                                     className="jira-select"
                                                 >
                                                     <option value="">Select Lead...</option>
-                                                    {users.map(user => (
-                                                        <option key={user.id} value={user.id}>
-                                                            {user.username} ({user.role})
-                                                        </option>
-                                                    ))}
+                                                    {users
+                                                        .filter(u => u.role !== 'ADMIN')
+                                                        .map(user => (
+                                                            <option key={user.id} value={user.id}>
+                                                                {user.username} ({user.role})
+                                                            </option>
+                                                        ))}
                                                 </select>
                                                 <button
                                                     className="btn-save-sm"

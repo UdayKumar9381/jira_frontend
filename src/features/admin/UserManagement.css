@@ -92,10 +92,11 @@
 }
 
 .users-table-container {
-    background: var(--bg-secondary);
+    background: white;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid var(--border-color);
+    border: 1px solid #dfe1e6;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .users-table {
@@ -105,36 +106,41 @@
 
 .users-table th,
 .users-table td {
-    padding: 1rem;
+    padding: 12px 16px;
     text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #f4f5f7;
 }
 
 .users-table th {
-    background: var(--bg-tertiary);
-    font-weight: 600;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
+    background: white;
+    font-weight: 700;
+    color: #5e6c84;
+    font-size: 11px;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
+}
+
+.users-table tr:hover {
+    background-color: #f4f5f7;
 }
 
 .user-cell {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 12px;
 }
 
 .user-avatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: var(--jira-blue);
+    background: #0052cc;
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 13px;
     overflow: hidden;
 }
 
@@ -145,21 +151,23 @@
 }
 
 .user-name {
-    font-weight: 500;
-    color: var(--text-primary);
+    font-weight: 600;
+    color: #172b4d;
+    font-size: 14px;
 }
 
 .role-badge {
     display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .role-badge-admin {
-    background: #ffebf0;
-    color: #c9372c;
+    background: #ffecf0;
+    color: #bf2600;
 }
 
 .role-badge-developer {
@@ -172,26 +180,24 @@
     color: #172b4d;
 }
 
-.role-badge-other {
-    background: #dfe1e6;
-    color: #42526e;
-}
-
 .change-role-btn {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 0.8rem;
-    border: 1px solid var(--border-color);
-    background: white;
-    border-radius: 4px;
+    gap: 8px;
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    color: #42526e;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 13px;
+    font-weight: 500;
     transition: all 0.2s;
 }
 
 .change-role-btn:hover {
-    background: var(--bg-tertiary);
+    background: #ebecf0;
+    color: #172b4d;
 }
 
 .user-management-error {

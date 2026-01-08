@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { authService } from "../../services/api";
-import kietLogo from "../../assets/kiet-logo.png";
-import "./JiraAuth.css";
+import React, { useState } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { authService } from '../../services/api';
+import { formatError } from '../../utils/renderUtils';
+import './ResetPassword.css';
 
 export default function ResetPassword() {
     const [searchParams] = useSearchParams();
@@ -82,7 +82,8 @@ export default function ResetPassword() {
                         <div className="jira-bar-3"></div>
                     </div>
 
-                    <h3 className="jira-marketing-title">Secure your account</h3>
+                    {error && <div className="jira-reset-error">{formatError(error)}</div>}
+                    {message && <div className="jira-reset-success">{message}</div>}
 
                     <div className="jira-checklist">
                         <div className="jira-check-item">✓ Choose a strong password</div>

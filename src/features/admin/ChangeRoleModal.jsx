@@ -56,8 +56,6 @@ const ChangeRoleModal = ({ user, onClose, onUpdate }) => {
                                 <option value="ADMIN">Admin</option>
                                 <option value="DEVELOPER">Developer</option>
                                 <option value="TESTER">Tester</option>
-                                <option value="TEAM_LEAD">Team Lead</option>
-                                <option value="MEMBER">Member</option>
                             </select>
                         </div>
 

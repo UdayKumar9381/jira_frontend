@@ -126,7 +126,7 @@ const TeamDetailsPage = () => {
     };
 
     const availableUsers = allUsers.filter(user =>
-        !team?.members?.some(member => member.id === user.id)
+        user.role !== 'ADMIN' && !team?.members?.some(member => member.id === user.id)
     );
 
     if (loading) {

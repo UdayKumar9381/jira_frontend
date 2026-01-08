@@ -8,14 +8,14 @@ const NotificationsDropdown = ({ userId, isOpen, onClose, onUnreadCountChange })
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (isOpen && userId) {
+        if (isOpen && userId && typeof userId === 'number') {
             fetchNotifications();
         }
     }, [isOpen, userId]);
 
     // Initial fetch to show badge count
     useEffect(() => {
-        if (userId) {
+        if (userId && typeof userId === 'number') {
             fetchNotifications(true);
         }
     }, [userId]);

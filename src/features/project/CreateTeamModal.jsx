@@ -119,11 +119,13 @@ const CreateTeamModal = ({ projectId, onClose, onSuccess, users }) => {
                                         onChange={e => setFormData({ ...formData, lead_id: e.target.value })}
                                     >
                                         <option value="">Select a leader</option>
-                                        {users.map(user => (
-                                            <option key={user.id} value={user.id}>
-                                                {user.username} ({user.email})
-                                            </option>
-                                        ))}
+                                        {users
+                                            .filter(u => u.role !== 'ADMIN')
+                                            .map(user => (
+                                                <option key={user.id} value={user.id}>
+                                                    {user.username} ({user.email})
+                                                </option>
+                                            ))}
                                     </select>
                                     <p className="field-hint">The person responsible for team decisions</p>
                                 </div>
@@ -131,19 +133,21 @@ const CreateTeamModal = ({ projectId, onClose, onSuccess, users }) => {
                                 <div className="form-group">
                                     <label className="jira-label">Members (Select multiple)</label>
                                     <div className="members-select-grid">
-                                        {users.map(user => (
-                                            <div
-                                                key={user.id}
-                                                className={`member-select-item ${formData.member_ids.includes(user.id) ? 'selected' : ''}`}
-                                                onClick={() => toggleMember(user.id)}
-                                            >
-                                                <div className="member-avatar-mini">
-                                                    {user.username.charAt(0).toUpperCase()}
+                                        {users
+                                            .filter(u => u.role !== 'ADMIN')
+                                            .map(user => (
+                                                <div
+                                                    key={user.id}
+                                                    className={`member-select-item ${formData.member_ids.includes(user.id) ? 'selected' : ''}`}
+                                                    onClick={() => toggleMember(user.id)}
+                                                >
+                                                    <div className="member-avatar-mini">
+                                                        {user.username.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <span>{user.username}</span>
+                                                    {formData.member_ids.includes(user.id) && <CheckCircle size={14} className="check-icon" />}
                                                 </div>
-                                                <span>{user.username}</span>
-                                                {formData.member_ids.includes(user.id) && <CheckCircle size={14} className="check-icon" />}
-                                            </div>
-                                        ))}
+                                            ))}
                                     </div>
                                 </div>
                             </>

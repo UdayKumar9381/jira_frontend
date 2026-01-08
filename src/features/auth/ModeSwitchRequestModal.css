@@ -1,0 +1,37 @@
+.mode-request-modal {
+    max-width: 500px;
+    width: 90%;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.request-p {
+    font-size: 14px;
+    color: #42526e;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.mode-request-modal textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #dfe1e6;
+    border-radius: 4px;
+    resize: vertical;
+    font-size: 14px;
+    font-family: inherit;
+    margin-top: 8px;
+}
+
+.mode-request-modal textarea:focus {
+    border-color: #4c9aff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 154, 255, 0.2);
+}
+
+.error-message {
+    color: #de350b;
+    font-size: 13px;
+    margin-top: 10px;
+}

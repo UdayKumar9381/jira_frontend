@@ -3,7 +3,8 @@ import { Search, Edit2, User as UserIcon } from 'lucide-react';
 import { adminService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import ChangeRoleModal from './ChangeRoleModal';
-import AdminProjects from './AdminProjects'; // Import AdminProjects
+import AdminProjects from './AdminProjects';
+import ModeSwitchResponses from './ModeSwitchResponses';
 import './UserManagement.css';
 
 const UserManagement = () => {
@@ -69,10 +70,7 @@ const UserManagement = () => {
         const roleClasses = {
             ADMIN: 'role-badge-admin',
             DEVELOPER: 'role-badge-developer',
-            TESTER: 'role-badge-tester',
-            TEAM_LEAD: 'role-badge-developer',
-            MEMBER: 'role-badge-other',
-            OTHER: 'role-badge-other'
+            TESTER: 'role-badge-tester'
         };
         return roleClasses[role] || 'role-badge-other';
     };
@@ -84,7 +82,7 @@ const UserManagement = () => {
     return (
         <div className="user-management-container">
             <div className="user-management-header">
-                <h1>Admin Dashboard</h1>
+                <h1>Master Admin Dashboard</h1>
                 <p className="user-management-subtitle">Manage workspace users and projects</p>
 
                 <div className="admin-tabs">
@@ -99,6 +97,12 @@ const UserManagement = () => {
                         onClick={() => setActiveTab('PROJECTS')}
                     >
                         Projects
+                    </button>
+                    <button
+                        className={`admin-tab ${activeTab === 'RESPONSES' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('RESPONSES')}
+                    >
+                        Responses
                     </button>
                 </div>
             </div>
@@ -126,8 +130,6 @@ const UserManagement = () => {
                                 <option value="ADMIN">Admin</option>
                                 <option value="DEVELOPER">Developer</option>
                                 <option value="TESTER">Tester</option>
-                                <option value="TEAM_LEAD">Team Lead</option>
-                                <option value="MEMBER">Member</option>
                             </select>
                         </div>
                     </div>
@@ -188,9 +190,13 @@ const UserManagement = () => {
                         </table>
                     </div>
                 </>
-            ) : (
+            ) : activeTab === 'PROJECTS' ? (
                 <div className="admin-projects-wrapper">
                     <AdminProjects />
+                </div>
+            ) : (
+                <div className="admin-responses-wrapper">
+                    <ModeSwitchResponses onActionSuccess={fetchUsers} />
                 </div>
             )}
 
