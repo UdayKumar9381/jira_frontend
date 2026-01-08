@@ -70,6 +70,7 @@ export const endpoints = {
 
     userStories: '/user-stories',
     projectStories: (projectId) => `/user-stories/project/${projectId}`,
+    projectBoard: (projectId) => `/user-stories/project/${projectId}/board`,
     storyStatus: (id) => `/user-stories/${id}/status`,
     story: (id) => `/user-stories/${id}`,
     storyActivity: (id) => `/user-stories/${id}/activity`,
@@ -258,6 +259,11 @@ export const storyService = {
         return response.data;
     },
 
+    getProjectBoard: async (projectId) => {
+        const response = await api.get(endpoints.projectBoard(projectId));
+        return response.data;
+    },
+
     getById: async (id) => {
         const response = await api.get(endpoints.story(id));
         return response.data;
@@ -319,6 +325,18 @@ export const storyService = {
         const response = await api.get(
             `${endpoints.search}?q=${encodeURIComponent(query)}`
         );
+        return response.data;
+    },
+
+    getIssueTypes: async () => {
+        const response = await api.get('/user-stories/types');
+        return response.data;
+    },
+
+    getAvailableParents: async (projectId, issueType, excludeId = null) => {
+        let url = `/user-stories/available-parents?project_id=${projectId}&issue_type=${issueType}`;
+        if (excludeId) url += `&exclude_id=${excludeId}`;
+        const response = await api.get(url);
         return response.data;
     },
 

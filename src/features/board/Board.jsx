@@ -24,13 +24,13 @@ const Board = () => {
     const { projectId } = useParams();
     const navigate = useNavigate();
     const [issues, setIssues] = useState([]);
-    const [filteredIssues, setFilteredIssues] = useState({});
     const [selectedType, setSelectedType] = useState('All');
     const [selectedTeam, setSelectedTeam] = useState('All');
     const [teams, setTeams] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [project, setProject] = useState(null);
+    const [issueTypes, setIssueTypes] = useState([]);
     const { canCreateIssue, canDragDrop } = usePermissions();
 
     useEffect(() => {
@@ -52,7 +52,6 @@ const Board = () => {
 
     const fetchProject = async () => {
         try {
-            // Ideally we should have a getById endpoint, but using getAll for now
             const projects = await projectService.getAll();
             const current = projects.find(p => String(p.id) === String(projectId));
             setProject(current);
@@ -65,32 +64,49 @@ const Board = () => {
         if (projectId) {
             fetchIssues();
             fetchProject();
+            storyService.getIssueTypes()
+                .then(data => setIssueTypes(Array.isArray(data) ? data : []))
+                .catch(err => console.error("Failed to fetch issue types", err));
         }
     }, [projectId]);
 
-    useEffect(() => {
-        // Group issues by normalized status
+    // Helper for consistency
+    const isMatch = (issue) => {
+        const queryMatch = !searchQuery ||
+            issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (issue.story_pointer && issue.story_pointer.toLowerCase().includes(searchQuery.toLowerCase()));
+
+        const typeMatch = selectedType === 'All' ||
+            (issue.issue_type || issue.type || 'STORY').toUpperCase() === selectedType.toUpperCase();
+
+        const teamMatch = selectedTeam === 'All' || String(issue.team_id) === String(selectedTeam);
+
+        return queryMatch && typeMatch && teamMatch;
+    };
+
+    // Separate Epics and standard issues, applying filters to BOTH
+    const epics = issues.filter(i => 
+        (i.issue_type || '').toUpperCase() === 'EPIC' && isMatch(i)
+    );
+    
+    const tasks = issues.filter(i => (i.issue_type || '').toUpperCase() !== 'EPIC');
+
+    // Filter tasks for the board
+    const getFilteredTasks = () => {
         const grouped = {};
         COLUMNS.forEach(col => grouped[col] = []);
 
-        issues.forEach(issue => {
+        tasks.forEach(issue => {
             const normalized = normalizeStatus(issue.status);
 
-            const queryMatch = !searchQuery ||
-                issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                issue.story_pointer.toLowerCase().includes(searchQuery.toLowerCase());
-
-            const typeMatch = selectedType === 'All' ||
-                (issue.issue_type || issue.type || 'STORY').toUpperCase() === selectedType.toUpperCase();
-
-            const teamMatch = selectedTeam === 'All' || String(issue.team_id) === String(selectedTeam);
-
-            if (queryMatch && typeMatch && teamMatch) {
+            if (isMatch(issue)) {
                 grouped[normalized].push(issue);
             }
         });
-        setFilteredIssues(grouped);
-    }, [issues, searchQuery, selectedType, selectedTeam]);
+        return grouped;
+    };
+
+    const boardColumns = getFilteredTasks();
 
     const onDragEnd = async (result) => {
         const { destination, source, draggableId } = result;
@@ -104,7 +120,6 @@ const Board = () => {
         }
 
         const newStatus = destination.droppableId;
-        const oldStatus = source.droppableId;
 
         // Optimistic update
         const updatedIssues = issues.map(issue => {
@@ -119,7 +134,7 @@ const Board = () => {
             await storyService.updateStatus(parseInt(draggableId), newStatus);
         } catch (error) {
             console.error("Failed to update status", error);
-            // Revert (not implemented for brevity)
+            fetchIssues(); // Revert
         }
     };
 
@@ -129,7 +144,7 @@ const Board = () => {
                 <div className="header-left">
                     <div className="board-title-group">
                         <Kanban className="title-icon" />
-                        <h1>Kanban Board</h1>
+                        <h1>{project ? project.name : 'Board'}</h1>
                     </div>
                 </div>
 
@@ -149,9 +164,9 @@ const Board = () => {
                                 className="jira-select"
                             >
                                 <option value="All">All Types</option>
-                                <option value="Story">Story</option>
-                                <option value="Bug">Bug</option>
-                                <option value="Task">Task</option>
+                                {issueTypes.map(type => (
+                                    <option key={type} value={type}>{type}</option>
+                                ))}
                             </select>
 
                             <select
@@ -200,19 +215,45 @@ const Board = () => {
                 </div>
             )}
 
-            <main className="jira-board-canvas">
+            <main className="jira-board-canvas" style={{ flexDirection: 'column', gap: '20px' }}>
+                
+                {/* 1. EPICS SECTION */}
+                <div className="epics-panel-section">
+                    <div className="epics-panel-header">
+                        <span className="epics-panel-title">EPICS ({epics.length})</span>
+                    </div>
+                    <div className="epics-panel-list">
+                        {epics.length === 0 ? (
+                            <div className="no-epics-placeholder">No epics created yet.</div>
+                        ) : (
+                            epics.map(epic => (
+                                <div key={epic.id} className="epic-panel-card" onClick={() => navigate(`/projects/${projectId}/issues/${epic.id}`)}>
+                                    <div className="epic-card-top">
+                                        <span className="epic-card-key">{epic.story_pointer || epic.title.substring(0, 3).toUpperCase()}</span>
+                                    </div>
+                                    <div className="epic-card-title">{epic.title}</div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                {/* 2. KANBAN BOARD SECTION (Issues) */}
                 <DragDropContext onDragEnd={onDragEnd}>
-                    {COLUMNS.map(status => (
-                        <BoardColumn
-                            key={status}
-                            id={status}
-                            title={status}
-                            isDragDisabled={!canDragDrop()}
-                            issues={filteredIssues[status] || []}
-                            teams={teams}
-                            onIssueClick={(issue) => navigate(`/projects/${projectId}/issues/${issue.id}`)}
-                        />
-                    ))}
+                    <div className="simple-board-view" style={{ display: 'flex', gap: '16px', height: '100%' }}>
+                        {COLUMNS.map(status => (
+                            <BoardColumn
+                                key={status}
+                                id={status}
+                                title={status}
+                                isDragDisabled={!canDragDrop()}
+                                issues={boardColumns[status] || []}
+                                teams={teams}
+                                showHeader={true} 
+                                onIssueClick={(issue) => navigate(`/projects/${projectId}/issues/${issue.id}`)}
+                            />
+                        ))}
+                    </div>
                 </DragDropContext>
             </main>
 
@@ -220,7 +261,9 @@ const Board = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 projectId={projectId}
-                onIssueCreated={fetchIssues}
+                onIssueCreated={() => {
+                    fetchIssues();
+                }}
             />
         </div>
     );

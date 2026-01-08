@@ -3,14 +3,16 @@ import { Droppable } from '@hello-pangea/dnd';
 import IssueCard from './IssueCard';
 import './BoardColumn.css';
 
-const BoardColumn = ({ id, title, issues, onIssueClick, teams = [] }) => {
+const BoardColumn = ({ id, title, issues, onIssueClick, teams = [], showHeader = true, isSwimlane = false }) => {
     return (
-        <div className="jira-board-column">
-            <div className="jira-column-header">
-                <h2 className="jira-column-title">
-                    {title} <span className="jira-column-count">{issues.length}</span>
-                </h2>
-            </div>
+        <div className={`jira-board-column ${isSwimlane ? 'swimlane-column' : ''}`}>
+            {showHeader && (
+                <div className="jira-column-header">
+                    <h2 className="jira-column-title">
+                        {title} <span className="jira-column-count">{issues.length}</span>
+                    </h2>
+                </div>
+            )}
             <Droppable droppableId={id}>
                 {(provided, snapshot) => (
                     <div

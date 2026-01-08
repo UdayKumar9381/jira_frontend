@@ -25,6 +25,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
     priority: 'Medium',
     start_date: '',
     end_date: '',
+    parent_issue_id: '',
     team_id: ''
   };
 
@@ -40,8 +41,39 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
   const [users, setUsers] = useState([]);
   const [teams, setTeams] = useState([]);
   const [createAnother, setCreateAnother] = useState(false);
+  const [parentOptions, setParentOptions] = useState([]); 
+  const [fetchingParents, setFetchingParents] = useState(false); // [NEW] Loading state
 
-  const activeProjectId = projectId || 1;
+  const activeProjectId = projectId ? parseInt(projectId) : 1;
+
+  // [NEW] Fetch Parent Options when Type changes and Project is active
+  useEffect(() => {
+    if (!formData.issue_type || !activeProjectId || !isOpen) {
+        setParentOptions([]);
+        return;
+    }
+    // Don't fetch for Epic as it has no parent
+    if (formData.issue_type === 'Epic') {
+        setParentOptions([]);
+        return;
+    }
+    
+    setFetchingParents(true);
+    console.log(`Fetching parents for Project ${activeProjectId} Type ${formData.issue_type}`);
+    
+    storyService.getAvailableParents(activeProjectId, formData.issue_type)
+        .then(data => {
+            console.log("Parents fetched:", data);
+            setParentOptions(Array.isArray(data) ? data : []);
+        })
+        .catch(err => {
+            console.error("Failed to fetch parents", err);
+            setParentOptions([]);
+        })
+        .finally(() => setFetchingParents(false));
+        
+  }, [formData.issue_type, activeProjectId, isOpen]);
+
 
   // Load initial data only once when modal opens
   useEffect(() => {
@@ -124,9 +156,11 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
 
   const getIssueTypeIcon = (type) => {
     switch (type) {
+      case 'Epic': return <Bookmark size={16} color="#904ee2" fill="#904ee2" />; // Purple for Epic
       case 'Bug': return <AlertCircle size={16} color="#e5493a" />;
-      case 'Story': return <Bookmark size={16} color="#65ba43" />;
+      case 'Story': return <Bookmark size={16} color="#65ba43" fill="#65ba43" />; // Green Story
       case 'Task': return <CheckSquare size={16} color="#4bade8" />;
+      case 'Subtask': return <CheckSquare size={16} color="#4bade8" />; // Same for subtask for now
       default: return <CheckSquare size={16} color="#4bade8" />;
     }
   };
@@ -173,7 +207,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     value={formData.title}
                     onChange={handleChange}
                     required
-                    placeholder="Short summary of the issue"
+                    placeholder="Summary"
                   />
                 </section>
 
@@ -184,7 +218,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    placeholder="Provide more details..."
+                    placeholder="Description"
                   />
                 </section>
 
@@ -192,7 +226,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                   <label className="jira-label">Attachments</label>
                   <div className="file-upload-zone">
                     <Plus size={24} color="#6b778c" />
-                    <span>Click or drag file to upload</span>
+                    <span>Click or drag file</span>
                     <input type="file" onChange={handleFileChange} className="file-input-hidden" />
                     {file && <div className="selected-file-badge">{file.name}</div>}
                   </div>
@@ -212,7 +246,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     </div>
                     {isTypeDropdownOpen && (
                       <div className="jira-dropdown-floating">
-                        {['Story', 'Task', 'Bug'].map(type => (
+                        {['Epic', 'Story', 'Task', 'Bug', 'Subtask'].map(type => (
                           <div
                             key={type}
                             className={`dropdown-item ${formData.issue_type === type ? 'active' : ''}`}
@@ -229,6 +263,37 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     )}
                   </div>
                 </div>
+
+                {/* [NEW] Parent Issue Selector */}
+                {/* Only show if not Epic and options exist (or at least type is not Epic) */}
+                {formData.issue_type !== 'Epic' && (
+                    <div className="sidebar-field">
+                      <label className="jira-label">
+                        {formData.issue_type === 'Story' ? 'Epic Link' : 
+                         formData.issue_type === 'Subtask' ? 'Parent Task' : 
+                         'Parent Issue'}
+                      </label>
+                      <select
+                        className="jira-select-premium"
+                        name="parent_issue_id"
+                        value={formData.parent_issue_id || ''}
+                        onChange={handleChange}
+                        disabled={fetchingParents}
+                      >
+                        <option value="">
+                            {fetchingParents ? "Loading..." : "None"}
+                        </option>
+                        {!fetchingParents && parentOptions.length === 0 && (
+                             <option value="" disabled>No valid parents found</option>
+                        )}
+                        {parentOptions.map(p => (
+                            <option key={p.id} value={p.id}>
+                                {p.story_code} - {p.title}
+                            </option>
+                        ))}
+                      </select>
+                    </div>
+                )}
 
                 <div className="sidebar-field">
                   <label className="jira-label">Assignee</label>
