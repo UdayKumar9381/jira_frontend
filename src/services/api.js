@@ -112,6 +112,11 @@ export const statsService = {
         const response = await api.get(endpoints.stats.history);
         return response.data;
     },
+    getRecentActivity: async (projectId = null) => {
+        const url = projectId ? `/stats/activity?project_id=${projectId}` : '/stats/activity';
+        const response = await api.get(url);
+        return response.data;
+    },
 };
 
 // --------------------------------------------------
@@ -402,6 +407,11 @@ export const storyService = {
 
     getIssueTypes: async () => {
         const response = await api.get('/user-stories/types');
+        return response.data;
+    },
+
+    getAllEpics: async () => {
+        const response = await api.get('/user-stories/epics/all');
         return response.data;
     },
 

@@ -13,24 +13,30 @@ import {
     Zap,
     Plus
 } from 'lucide-react';
-import { projectService, storyService } from '../../services/api';
+import { projectService, storyService, statsService } from '../../services/api';
 import './ProjectSummary.css';
+import { Activity } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ProjectSummary = () => {
     const { projectId } = useParams();
+    const navigate = useNavigate();
     const [project, setProject] = useState(null);
     const [issues, setIssues] = useState([]);
+    const [recentActivity, setRecentActivity] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                const [projData, issuesData] = await Promise.all([
+                const [projData, issuesData, activityData] = await Promise.all([
                     projectService.getAll().then(list => list.find(p => String(p.id) === String(projectId))),
-                    storyService.getByProject(projectId)
+                    storyService.getByProject(projectId),
+                    statsService.getRecentActivity(projectId)
                 ]);
                 setProject(projData);
                 setIssues(issuesData);
+                setRecentActivity(activityData);
             } catch (err) {
                 console.error("Failed to load summary data", err);
             } finally {
@@ -46,6 +52,35 @@ const ProjectSummary = () => {
         const percent = total > 0 ? Math.round((done / total) * 100) : 0;
         return { total, done, percent };
     }, [issues]);
+
+    const handleIssueClick = (issueId) => {
+        navigate(`/projects/${projectId}/issues/${issueId}`);
+    };
+
+    const formatActivityDate = (dateString) => {
+        if (!dateString) return 'Unknown date';
+        try {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMins / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays}d ago`;
+
+            return date.toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric'
+            });
+        } catch (e) {
+            return 'Invalid date';
+        }
+    };
 
     if (loading) return <div className="summary-loading">Gathering project insights...</div>;
 
@@ -113,26 +148,42 @@ const ProjectSummary = () => {
 
                     <section className="summary-section glass">
                         <div className="section-header">
-                            <h2>Recent Activity</h2>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <Activity size={20} color="#0052cc" />
+                                <h2>Recent Activity</h2>
+                            </div>
                             <Link to={`/projects/${projectId}/issues`} className="section-link">
                                 View all <ArrowRight size={14} />
                             </Link>
                         </div>
                         <div className="recent-list-modern">
-                            {issues.slice(0, 5).map(issue => (
-                                <div key={issue.id} className="summary-issue-card">
-                                    <div className={`status-border ${issue.status?.toLowerCase().replace(/\s+/g, '-')}`}></div>
-                                    <div className="issue-content-row">
-                                        <div className="issue-main-info">
-                                            <span className="issue-key">{issue.story_pointer}</span>
-                                            <span className="issue-title-text">{issue.title}</span>
+                            {recentActivity.length > 0 ? (
+                                recentActivity.slice(0, 5).map(activity => (
+                                    <div key={activity.id} className="summary-activity-item" onClick={() => handleIssueClick(activity.issue.id)}>
+                                        <div className="activity-meta">
+                                            <div>
+                                                <span className="activity-user">{activity.actor.username}</span>
+                                                <span className="activity-action">{activity.action.toLowerCase()}</span>
+                                                an issue
+                                            </div>
+                                            <span>{formatActivityDate(activity.created_at)}</span>
                                         </div>
-                                        <div className={`status-pill status-${issue.status?.toLowerCase().replace(/\s+/g, '-')}`}>
-                                            {issue.status}
+
+                                        <div className="activity-title">
+                                            <span style={{ color: '#0052cc', marginRight: '8px' }}>{activity.issue.key}</span>
+                                            {activity.issue.title}
+                                        </div>
+
+                                        <div className="activity-desc">
+                                            {activity.changes.replace(/<[^>]*>/g, '').substring(0, 100)}...
                                         </div>
                                     </div>
+                                ))
+                            ) : (
+                                <div style={{ textAlign: 'center', padding: '40px', color: '#6b778c' }}>
+                                    <p>No recent activity found in this project.</p>
                                 </div>
-                            ))}
+                            )}
                         </div>
                     </section>
                 </div>
@@ -145,7 +196,7 @@ const ProjectSummary = () => {
                                 <User size={16} />
                                 <div>
                                     <span className="info-label">Lead</span>
-                                    <span className="info-value">Alex Rivers</span>
+                                    <span className="info-value">{project?.owner?.username || 'Unknown'}</span>
                                 </div>
                             </div>
                             <div className="info-item">
@@ -159,7 +210,15 @@ const ProjectSummary = () => {
                                 <CalendarIcon size={16} />
                                 <div>
                                     <span className="info-label">Created on</span>
-                                    <span className="info-value">Nov 24, 2024</span>
+                                    <span className="info-value">
+                                        {project?.created_at
+                                            ? new Date(project.created_at).toLocaleDateString(undefined, {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric'
+                                            })
+                                            : 'Unknown'}
+                                    </span>
                                 </div>
                             </div>
                         </div>

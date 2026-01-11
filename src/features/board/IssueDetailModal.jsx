@@ -3,6 +3,7 @@ import Modal from '../../components/common/Modal';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import { storyService, authService, teamService } from '../../services/api';
+import { syncTeamMembership } from '../../utils/teamUtils';
 import { useAuth } from '../../context/AuthContext';
 import usePermissions from '../../hooks/usePermissions';
 import PropTypes from 'prop-types';
@@ -107,6 +108,12 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
 
             console.log("Updating issue with payload:", payload);
             await storyService.update(issue.id, payload);
+
+            // Sync team membership if assignee and team are selected
+            if (payload.team_id && payload.assignee_id) {
+                await syncTeamMembership(payload.team_id, payload.assignee_id);
+            }
+
             onIssueUpdated();
             onClose();
         } catch (err) {
@@ -225,7 +232,8 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                             value={formData.assignee_id || ''}
                             onChange={handleAssigneeChange}
                             required
-                            disabled={isIssueReadOnly(issue)}
+                            disabled={isIssueReadOnly(issue) || user?.role === 'DEVELOPER'}
+                            style={{ backgroundColor: (isIssueReadOnly(issue) || user?.role === 'DEVELOPER') ? '#f4f5f7' : '#fff', color: (isIssueReadOnly(issue) || user?.role === 'DEVELOPER') ? '#a5adba' : '#172b4d' }}
                         >
                             <option value="">Select assignee...</option>
                             {users.map(user => (

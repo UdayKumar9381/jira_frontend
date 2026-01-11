@@ -127,7 +127,7 @@ const Navbar = ({ onCreateClick }) => {
     return (
         <header className="jira-navbar">
             <div className="jira-navbar-start">
-                <div className="jira-logo-area" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+                <div className="jira-logo-area" onClick={() => navigate('/my-work')} style={{ cursor: 'pointer' }}>
                     <img src={logo} alt="KIET Logo" className="jira-navbar-logo" style={{ height: '32px', marginRight: '8px' }} />
                     <span className="jira-logo-text" style={{ fontSize: '1.5rem', fontWeight: 'bold', background: 'linear-gradient(90deg, #4F46E5, #06B6D4)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>KIET</span>
                 </div>
@@ -215,9 +215,7 @@ const Navbar = ({ onCreateClick }) => {
                         <a href="#" className="jira-nav-link" onClick={(e) => { e.preventDefault(); navigate('/admin/users'); }}>User Management</a>
                     )}
                 </nav>
-                {canCreateIssue() && !user?.is_master_admin && (
-                    <Button variant="primary" onClick={onCreateClick}>Create</Button>
-                )}
+
             </div>
 
             <div className="jira-navbar-end">

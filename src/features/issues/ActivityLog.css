@@ -1,53 +1,65 @@
+/* Main Section Container */
 .activity-log-section {
     margin-top: 48px;
-    border-top: 1px solid #ebecf0;
     padding-top: 32px;
+    border-top: 1px solid #dfe1e6;
 }
 
 .activity-log-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     color: #172b4d;
     margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
+/* Timeline/List Container */
 .activity-timeline {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
 }
 
+/* Individual Activity Card (Jira-style) */
 .activity-item {
     display: flex;
-    gap: 16px;
-    align-items: flex-start;
-}
-
-.activity-avatar {
-    width: 32px;
-    height: 32px;
-    background-color: #0052cc;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 12px;
-    flex-shrink: 0;
-}
-
-.activity-content {
-    display: flex;
     flex-direction: column;
-    gap: 4px;
-    font-size: 14px;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 8px;
+    background: white;
+    border: 1px solid #ebecf0;
+    transition: all 0.2s ease;
+    cursor: default;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
 }
 
+.activity-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(9, 30, 66, 0.08);
+    border-color: #b3d4ff;
+    z-index: 1;
+}
+
+/* Header with User and Action Badge */
 .activity-header {
     display: flex;
-    gap: 8px;
+    justify-content: space-between;
     align-items: center;
+    font-size: 12px;
+    color: #6b778c;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.activity-user-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .activity-user {
@@ -55,42 +67,96 @@
     color: #172b4d;
 }
 
+/* Blue Action Badge (Synchronized with YourWork.jsx) */
+.activity-action {
+    color: #0052cc;
+    font-weight: 600;
+    background: #deebff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+}
+
 .activity-time {
     color: #5e6c84;
-    font-size: 12px;
+    font-size: 11px;
 }
 
+/* Change Detail / Description Box */
 .activity-detail {
-    color: #42526e;
-    line-height: 1.5;
+    font-size: 13px;
+    color: #172b4d;
+    line-height: 1.6;
 }
 
+/* Diff / Changes Box (Synchronized style) */
+.activity-desc-box {
+    font-size: 13px;
+    color: #5e6c84;
+    padding: 10px 12px;
+    background: #f4f5f7;
+    border-radius: 0 4px 4px 0;
+    border-left: 4px solid #0052cc;
+    margin-top: 4px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+/* Specific inner element styling for changes */
 .field-name {
     font-weight: 600;
-    color: #172b4d;
+    color: #42526e;
+    font-style: italic;
+}
+
+.old-value {
+    color: #de350b;
+    text-decoration: line-through;
+}
+
+.new-value {
+    color: #006644;
+    font-weight: 600;
 }
 
 .change-arrow {
-    margin: 0 4px;
-    color: #5e6c84;
+    margin: 0 8px;
+    color: #8993a4;
 }
 
-.old-value,
-.new-value {
-    background-color: #f4f5f7;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-weight: 500;
-}
-
+/* Footer Date (Absolute Time) */
 .activity-date-detail {
     color: #8993a4;
-    font-size: 11px;
-    margin-top: 2px;
+    font-size: 10px;
+    margin-top: 4px;
+    text-align: right;
+    font-style: italic;
 }
 
 .no-activity {
-    color: #5e6c84;
+    text-align: center;
+    padding: 40px;
+    color: #6b778c;
     font-style: italic;
-    font-size: 14px;
+    background: #f4f5f7;
+    border-radius: 8px;
+    border: 1px dashed #dfe1e6;
+}
+
+/* Animations */
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

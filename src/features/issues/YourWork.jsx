@@ -1,36 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { storyService, projectService } from '../../services/api'; // Added projectService
+import { storyService, projectService, statsService } from '../../services/api'; // Added statsService
 import { useAuth } from '../../context/AuthContext';
 import AdminDashboard from './AdminDashboard';
-import { Briefcase, CheckSquare, Activity } from 'lucide-react'; // Added icons
+import { Briefcase, CheckSquare, Activity } from 'lucide-react';
 import './ListView.css';
 
 const YourWork = () => {
     const [stories, setStories] = useState([]);
+    const [recentActivity, setRecentActivity] = useState([]); // Store real activity
     const [loading, setLoading] = useState(true);
-    const [projectCount, setProjectCount] = useState(0); // Added state
+    const [projectCount, setProjectCount] = useState(0);
     const [error, setError] = useState(null);
 
     const navigate = useNavigate();
     const { user } = useAuth();
 
     useEffect(() => {
-        fetchData(); // Changed to fetch all data
-    }, []);
+        fetchData();
+    }, [user.view_mode]); // Refetch when mode changes
 
     const fetchData = async () => {
         try {
             setLoading(true);
 
             // Parallel fetch
-            const [storiesData, projectsData] = await Promise.all([
+            const [storiesData, projectsData, activityData] = await Promise.all([
                 storyService.getMyWork(),
-                projectService.getAll()
+                projectService.getAll(),
+                statsService.getRecentActivity() // Fetch real activity
             ]);
 
             setStories(storiesData);
             setProjectCount(projectsData.length);
+            setRecentActivity(activityData);
 
         } catch (err) {
             console.error('Failed to fetch data:', err);
@@ -40,15 +43,8 @@ const YourWork = () => {
         }
     };
 
-    const getRecentActivity = () => {
-        // Sort stories by updated_at desc and take top 10 for the feed
-        return [...stories]
-            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-            .slice(0, 10);
-    };
-
-    const handleStoryClick = (story) => {
-        navigate(`/projects/${story.project_id}/issues/${story.id}`);
+    const handleStoryClick = (issue) => {
+        navigate(`/projects/${issue.project_id}/issues/${issue.id}`);
     };
 
     const formatActivityDate = (dateString) => {
@@ -81,15 +77,6 @@ const YourWork = () => {
         }
     };
 
-    const getActivityAction = (story) => {
-        if (!story.created_at || !story.updated_at) return 'updated';
-        const created = new Date(story.created_at).getTime();
-        const updated = new Date(story.updated_at).getTime();
-        // If created within last minute of update, it's a create
-        if (Math.abs(updated - created) < 60000) return 'created';
-        return 'updated';
-    };
-
     if (loading) {
         return (
             <div className="list-view-container">
@@ -113,8 +100,6 @@ const YourWork = () => {
     if (user?.is_master_admin) {
         return <AdminDashboard />;
     }
-
-    const recentActivity = getRecentActivity();
 
     return (
         <div className="list-view-container">
@@ -161,36 +146,28 @@ const YourWork = () => {
 
                         {recentActivity.length > 0 ? (
                             <div className="recent-activity-list">
-                                {recentActivity.map(story => {
-                                    const action = getActivityAction(story);
-                                    // Use updated_by if available, else fallback to user or creator (approximation)
-                                    // ideally backend sends 'last_updated_by'
-                                    const actor = action === 'created' ? (story.creator_username || 'Someone') : (user.username); // Fallback for demo
-
-                                    return (
-                                        <div key={story.id} className="recent-activity-item" onClick={() => handleStoryClick(story)}>
-                                            <div className="activity-meta">
-                                                <div>
-                                                    <span className="activity-user">{actor}</span>
-                                                    <span className="activity-action">{action}</span>
-                                                    an issue
-                                                </div>
-                                                <span>{formatActivityDate(story.updated_at, story.created_at)}</span>
+                                {recentActivity.map(activity => (
+                                    <div key={activity.id} className="recent-activity-item" onClick={() => handleStoryClick(activity.issue)}>
+                                        <div className="activity-meta">
+                                            <div>
+                                                <span className="activity-user">{activity.actor.username}</span>
+                                                <span className="activity-action">{activity.action.toLowerCase()}</span>
+                                                an issue in
+                                                <span className="activity-project" style={{ marginLeft: '4px', fontWeight: 500 }}>{activity.issue.project_name}</span>
                                             </div>
-
-                                            <div className="activity-title">
-                                                <span style={{ color: '#0052cc', marginRight: '8px' }}>{story.project_key}-{story.id}</span>
-                                                {story.title}
-                                            </div>
-
-                                            {story.description && (
-                                                <div className="activity-desc">
-                                                    {story.description}
-                                                </div>
-                                            )}
+                                            <span>{formatActivityDate(activity.created_at)}</span>
                                         </div>
-                                    );
-                                })}
+
+                                        <div className="activity-title">
+                                            <span style={{ color: '#0052cc', marginRight: '8px' }}>{activity.issue.key}</span>
+                                            {activity.issue.title}
+                                        </div>
+
+                                        <div className="activity-desc">
+                                            {activity.changes.replace(/<[^>]*>/g, '').substring(0, 100)}...
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         ) : (
                             <div style={{ textAlign: 'center', padding: '40px', color: '#6b778c' }}>

@@ -120,7 +120,6 @@ const CreateTeamModal = ({ projectId, onClose, onSuccess, users }) => {
                                     >
                                         <option value="">Select a leader</option>
                                         {users
-                                            .filter(u => u.role !== 'ADMIN')
                                             .map(user => (
                                                 <option key={user.id} value={user.id}>
                                                     {user.username} ({user.email})
@@ -134,7 +133,6 @@ const CreateTeamModal = ({ projectId, onClose, onSuccess, users }) => {
                                     <label className="jira-label">Members (Select multiple)</label>
                                     <div className="members-select-grid">
                                         {users
-                                            .filter(u => u.role !== 'ADMIN')
                                             .map(user => (
                                                 <div
                                                     key={user.id}

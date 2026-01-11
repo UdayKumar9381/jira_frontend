@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Trash2, CheckSquare, Bookmark, AlertCircle, ChevronUp, ChevronDown, Minus, Clock, User, Calendar as CalendarIcon, Info } from 'lucide-react';
 import { storyService, teamService } from '../../services/api';
+import { syncTeamMembership } from '../../utils/teamUtils';
 import usePermissions from '../../hooks/usePermissions';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';
@@ -81,6 +82,16 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
             }
 
             const updatedIssue = await storyService.update(issue.id, payload);
+
+            // Sync team membership if assignee and team are selected
+            // Note: IssueDetailsDrawer might need to resolve assignee_id if it's not in formData
+            const assigneeId = formData.assignee_id || updatedIssue.assignee_id || issue.assignee_id;
+            const teamId = formData.team_id || updatedIssue.team_id || issue.team_id;
+
+            if (teamId && assigneeId) {
+                await syncTeamMembership(teamId, assigneeId);
+            }
+
             onUpdate(updatedIssue);
             setIsDirty(false);
         } catch (error) {

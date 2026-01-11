@@ -3,12 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Users, ArrowLeft, UserPlus, Trash2, Shield, Loader2, X, CheckCircle, Mail } from 'lucide-react';
 import { teamService, authService } from '../../services/api';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useAuth } from '../../context/AuthContext';
 import './TeamDetailsPage.css';
 
 const TeamDetailsPage = () => {
     const { projectId, teamId } = useParams();
     const navigate = useNavigate();
     const { isAdmin } = usePermissions();
+    const { user } = useAuth();
 
     const [team, setTeam] = useState(null);
     const [allUsers, setAllUsers] = useState([]);
@@ -125,6 +127,15 @@ const TeamDetailsPage = () => {
         );
     };
 
+    // Check if current user can manage this team (admin or team lead)
+    const canManageTeam = () => {
+        if (!user || !team) return false;
+        // Admin can always manage
+        if (isAdmin()) return true;
+        // Team lead can manage their own team
+        return team.lead_id === user.id;
+    };
+
     const availableUsers = allUsers.filter(user =>
         user.role !== 'ADMIN' && !team?.members?.some(member => member.id === user.id)
     );
@@ -167,7 +178,7 @@ const TeamDetailsPage = () => {
                         <p className="team-meta">{team.members?.length || 0} team members</p>
                     </div>
                 </div>
-                {isAdmin() && (
+                {canManageTeam() && (
                     <button className="btn-delete-team" onClick={handleDeleteTeam}>
                         <Trash2 size={18} />
                         Delete Team
@@ -204,7 +215,7 @@ const TeamDetailsPage = () => {
                     <div className="card-header">
                         <Users size={20} />
                         <h2>Team Members</h2>
-                        {isAdmin() && (
+                        {canManageTeam() && (
                             <button className="btn-add-member" onClick={() => setShowAddMemberModal(true)}>
                                 <UserPlus size={18} />
                                 Add Members
@@ -228,7 +239,7 @@ const TeamDetailsPage = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    {isAdmin() && member.id !== team.lead_id && (
+                                    {canManageTeam() && member.id !== team.lead_id && (
                                         <button
                                             className="btn-remove-member"
                                             onClick={() => handleRemoveMember(member.id)}
@@ -244,7 +255,7 @@ const TeamDetailsPage = () => {
                             <div className="empty-state">
                                 <Users size={48} />
                                 <p>No members in this team yet</p>
-                                {isAdmin() && (
+                                {canManageTeam() && (
                                     <button className="btn-add-first" onClick={() => setShowAddMemberModal(true)}>
                                         <UserPlus size={16} />
                                         Add First Member

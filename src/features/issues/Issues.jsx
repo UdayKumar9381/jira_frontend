@@ -430,7 +430,7 @@ const Issues = () => {
       )];
 
       const uniqueAssignees = [...new Set(
-        data.map(i => i.assigned_to).filter(a => a)
+        data.map(i => i.assignee).filter(a => a)
       )];
 
       setAllSprintsList(uniqueSprints);
@@ -457,7 +457,7 @@ const Issues = () => {
 
       const matchesAssignee =
         assigneeFilter === 'All' ||
-        String(issue.assigned_to) === String(assigneeFilter);
+        String(issue.assignee) === String(assigneeFilter);
 
       const matchesTeam =
         teamFilter === 'All' ||
@@ -598,6 +598,15 @@ const Issues = () => {
               <option value="All">All Teams</option>
               {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
+
+            {(selectedSprint !== 'All' || selectedAssignee !== 'All' || selectedTeam !== 'All') && (
+              <button
+                className="clear-all-btn"
+                onClick={() => { setSelectedSprint('All'); setSelectedAssignee('All'); setSelectedTeam('All'); }}
+              >
+                Clear all
+              </button>
+            )}
 
           </div>
 

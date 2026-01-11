@@ -7,6 +7,7 @@ import {
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import { storyService, authService, teamService } from '../../services/api';
+import { syncTeamMembership } from '../../utils/teamUtils';
 import { useAuth } from '../../context/AuthContext';
 import PropTypes from 'prop-types';
 import './CreateIssueModal.css';
@@ -41,38 +42,83 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
   const [users, setUsers] = useState([]);
   const [teams, setTeams] = useState([]);
   const [createAnother, setCreateAnother] = useState(false);
-  const [parentOptions, setParentOptions] = useState([]); 
-  const [fetchingParents, setFetchingParents] = useState(false); // [NEW] Loading state
+  const [parentOptions, setParentOptions] = useState([]);
+  const [fetchingParents, setFetchingParents] = useState(false);
+  const [globalEpics, setGlobalEpics] = useState([]); // [NEW] For global mode
+  const [isGlobalMode, setIsGlobalMode] = useState(false);
 
-  const activeProjectId = projectId ? parseInt(projectId) : 1;
-
-  // [NEW] Fetch Parent Options when Type changes and Project is active
+  // Determine mode
   useEffect(() => {
-    if (!formData.issue_type || !activeProjectId || !isOpen) {
+    setIsGlobalMode(!projectId);
+  }, [projectId]);
+
+  const activeProjectId = projectId ? parseInt(projectId) : null;
+
+  // [NEW] Fetch Parent Options / Global Epics
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const fetchParents = async () => {
+      setFetchingParents(true);
+      try {
+        // Case 1: Global Mode (Navbar) -> Fetch ALL Epics
+        if (isGlobalMode) {
+          const epics = await storyService.getAllEpics();
+          setGlobalEpics(epics);
+          // Also reset parent options for selector
+          setParentOptions(epics);
+        }
+        // Case 2: Project Mode (Board) -> Fetch Context Options
+        else if (activeProjectId && formData.issue_type) {
+          if (formData.issue_type === 'Epic') {
+            setParentOptions([]); // Epic has no parent
+          } else {
+            const parents = await storyService.getAvailableParents(activeProjectId, formData.issue_type);
+            setParentOptions(Array.isArray(parents) ? parents : []);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch parents/epics", err);
         setParentOptions([]);
-        return;
+      } finally {
+        setFetchingParents(false);
+      }
+    };
+
+    fetchParents();
+  }, [formData.issue_type, activeProjectId, isOpen, isGlobalMode]);
+
+  // [NEW] Handle Epic Selection in Global Mode to set context
+  const handleParentChange = async (e) => {
+    const parentId = e.target.value;
+
+    // Update form data first
+    setFormData(prev => ({ ...prev, parent_issue_id: parentId }));
+
+    // If in Global Mode, finding the parent (Epic) sets the Project Context
+    if (isGlobalMode && parentId) {
+      const selectedEpic = globalEpics.find(ep => String(ep.id) === parentId);
+      if (selectedEpic) {
+        console.log("Global Mode: Selected Epic", selectedEpic);
+        // Set implicit project ID
+        setFormData(prev => ({
+          ...prev,
+          parent_issue_id: parentId,
+          project_id: selectedEpic.project_id
+        }));
+
+        // Fetch Teams for this project
+        try {
+          const teamsData = await teamService.getByProject(selectedEpic.project_id);
+          setTeams(Array.isArray(teamsData) ? teamsData : []);
+        } catch (err) {
+          console.error("Failed to fetch teams for derived project", err);
+        }
+      }
+    } else {
+      handleChange(e);
     }
-    // Don't fetch for Epic as it has no parent
-    if (formData.issue_type === 'Epic') {
-        setParentOptions([]);
-        return;
-    }
-    
-    setFetchingParents(true);
-    console.log(`Fetching parents for Project ${activeProjectId} Type ${formData.issue_type}`);
-    
-    storyService.getAvailableParents(activeProjectId, formData.issue_type)
-        .then(data => {
-            console.log("Parents fetched:", data);
-            setParentOptions(Array.isArray(data) ? data : []);
-        })
-        .catch(err => {
-            console.error("Failed to fetch parents", err);
-            setParentOptions([]);
-        })
-        .finally(() => setFetchingParents(false));
-        
-  }, [formData.issue_type, activeProjectId, isOpen]);
+  };
 
 
   // Load initial data only once when modal opens
@@ -121,7 +167,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
     try {
       const payload = {
         ...formData,
-        project_id: parseInt(activeProjectId),
+        project_id: activeProjectId || (formData.project_id ? parseInt(formData.project_id) : null),
         assigned_to: formData.assignee_id ? parseInt(formData.assignee_id) : null,
         team_id: formData.team_id ? parseInt(formData.team_id) : null,
         story_pointer: 0,
@@ -131,6 +177,12 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
       };
 
       await storyService.create(payload);
+
+      // Sync team membership if assignee and team are selected
+      if (payload.team_id && payload.assigned_to) {
+        await syncTeamMembership(payload.team_id, payload.assigned_to);
+      }
+
       onIssueCreated();
 
       if (createAnother) {
@@ -222,6 +274,31 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                   />
                 </section>
 
+                <section className="form-section">
+                  <div className="form-row-dates">
+                    <div className="date-group">
+                      <label className="jira-label">Start Date</label>
+                      <input
+                        type="date"
+                        className="jira-input-premium"
+                        name="start_date"
+                        value={formData.start_date || ''}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="date-group">
+                      <label className="jira-label">End Date</label>
+                      <input
+                        type="date"
+                        className="jira-input-premium"
+                        name="end_date"
+                        value={formData.end_date || ''}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                </section>
+
                 <section className="form-section attachments-section">
                   <label className="jira-label">Attachments</label>
                   <div className="file-upload-zone">
@@ -267,32 +344,35 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                 {/* [NEW] Parent Issue Selector */}
                 {/* Only show if not Epic and options exist (or at least type is not Epic) */}
                 {formData.issue_type !== 'Epic' && (
-                    <div className="sidebar-field">
-                      <label className="jira-label">
-                        {formData.issue_type === 'Story' ? 'Epic Link' : 
-                         formData.issue_type === 'Subtask' ? 'Parent Task' : 
-                         'Parent Issue'}
-                      </label>
-                      <select
-                        className="jira-select-premium"
-                        name="parent_issue_id"
-                        value={formData.parent_issue_id || ''}
-                        onChange={handleChange}
-                        disabled={fetchingParents}
-                      >
-                        <option value="">
-                            {fetchingParents ? "Loading..." : "None"}
+                  <div className="sidebar-field">
+                    <label className="jira-label">
+                      {/* Show "Epic Link" for Story/Global, or "Parent" for others */}
+                      {isGlobalMode ? "Epic Link" : (
+                        formData.issue_type === 'Story' ? 'Epic Link' :
+                          formData.issue_type === 'Subtask' ? 'Parent Task' :
+                            'Parent Issue')}
+                    </label>
+                    <select
+                      className="jira-select-premium"
+                      name="parent_issue_id"
+                      value={formData.parent_issue_id || ''}
+                      onChange={handleParentChange}
+                      disabled={fetchingParents}
+                      required={formData.issue_type !== 'Epic'} // Enforce parent for non-Epics
+                    >
+                      <option value="">
+                        {fetchingParents ? "Loading..." : "None"}
+                      </option>
+                      {!fetchingParents && parentOptions.length === 0 && (
+                        <option value="" disabled>No valid parents found</option>
+                      )}
+                      {parentOptions.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.story_code} - {p.title}
                         </option>
-                        {!fetchingParents && parentOptions.length === 0 && (
-                             <option value="" disabled>No valid parents found</option>
-                        )}
-                        {parentOptions.map(p => (
-                            <option key={p.id} value={p.id}>
-                                {p.story_code} - {p.title}
-                            </option>
-                        ))}
-                      </select>
-                    </div>
+                      ))}
+                    </select>
+                  </div>
                 )}
 
                 <div className="sidebar-field">

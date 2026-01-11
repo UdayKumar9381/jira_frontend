@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authService } from '../../services/api';
 import { formatError } from '../../utils/renderUtils';
+import kietLogo from '../../assets/kiet-logo.png';
 import './ResetPassword.css';
 
 export default function ResetPassword() {
