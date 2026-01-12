@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ExternalLink } from 'lucide-react';
-import { projectService } from '../../services/api';
+import { projectService } from '../../services/projectService';
 import { useNavigate } from 'react-router-dom';
 import ManageTeamsModal from './ManageTeamsModal';
 import './AdminProjects.css';

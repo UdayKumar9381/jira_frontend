@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { authService } from '../services/api';
+import { authService } from '../services/authService';
 import { AuthContext, useAuth } from './useAuth';
 export { useAuth };
 // eslint-disable-next-line react/prop-types

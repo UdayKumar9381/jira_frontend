@@ -6,7 +6,9 @@ import {
 } from 'lucide-react';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import { storyService, authService, teamService } from '../../services/api';
+import { storyService } from '../../services/storyService';
+import { authService } from '../../services/authService';
+import { teamService } from '../../services/teamService';
 import { syncTeamMembership } from '../../utils/teamUtils';
 import { useAuth } from '../../context/AuthContext';
 import PropTypes from 'prop-types';

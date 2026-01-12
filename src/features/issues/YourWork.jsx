@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { storyService, projectService, statsService } from '../../services/api'; // Added statsService
+import { storyService } from '../../services/storyService';
+import { projectService } from '../../services/projectService';
+import { statsService } from '../../services/statsService';
 import { useAuth } from '../../context/AuthContext';
 import AdminDashboard from './AdminDashboard';
 import { Briefcase, CheckSquare, Activity } from 'lucide-react';

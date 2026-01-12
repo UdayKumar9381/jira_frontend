@@ -14,6 +14,7 @@ import Board from './features/board/Board';
 import Calendar from './features/calendar/Calendar'; // Add this
 import ActiveSprints from './features/board/ActiveSprints'; // Add this
 import Timeline from './features/timeline/Timeline';
+import NotificationsPage from './features/notifications/NotificationsPage';
 import Reports from './features/reports/Reports';
 import Issues from './features/issues/Issues';
 import YourWork from './features/issues/YourWork';
@@ -96,6 +97,7 @@ const App = () => {
               <Route path="/my-work" element={<YourWork />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/admin/users" element={<UserManagement />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
 
               {/* Project specific routes */}
               <Route path="/projects/:projectId/summary" element={<ProjectSummary />} />

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Modal from '../../components/common/Modal';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import { projectService } from '../../services/api';
+import { projectService } from '../../services/projectService';
 import { useAuth } from '../../context/AuthContext';
 import PropTypes from 'prop-types';
 

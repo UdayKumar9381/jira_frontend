@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { authService } from '../../services/api';
+import { authService } from '../../services/authService';
 import { formatError } from '../../utils/renderUtils';
 import kietLogo from '../../assets/kiet-logo.png';
 import './ResetPassword.css';

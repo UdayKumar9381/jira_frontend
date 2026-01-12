@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { storyService, projectService } from '../../services/api';
+import { storyService } from '../../services/storyService';
+import { projectService } from '../../services/projectService';
 import Button from '../../components/common/Button';
 import './Board.css';
 

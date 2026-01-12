@@ -25,3 +25,10 @@ export const formatError = (error) => {
 
     return String(error);
 };
+
+/**
+ * Standardized error logger to replace repetitive console.error lines.
+ */
+export const logError = (context, error) => {
+    console.error(`[${context}] Error:`, error);
+};

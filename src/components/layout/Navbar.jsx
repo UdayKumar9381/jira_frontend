@@ -11,7 +11,8 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../common/Button';
-import { projectService, storyService } from '../../services/api';
+import { projectService } from '../../services/projectService';
+import { storyService } from '../../services/storyService';
 import { useAuth } from '../../context/AuthContext';
 import usePermissions from '../../hooks/usePermissions';
 import logo from '../../assets/kiet-logo.png';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../../services/api';
+import { authService } from '../../services/authService';
 import kietLogo from '../../assets/kiet-logo.png';
 import { formatError } from '../../utils/renderUtils';
 import './Auth.css';

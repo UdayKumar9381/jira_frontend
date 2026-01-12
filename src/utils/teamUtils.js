@@ -1,4 +1,4 @@
-import { teamService } from '../services/api';
+import { teamService } from '../services/teamService';
 
 /**
  * Ensures that a user is a member of a team.

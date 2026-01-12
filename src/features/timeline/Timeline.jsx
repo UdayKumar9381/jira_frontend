@@ -18,7 +18,8 @@ import {
     X,
     Plus
 } from 'lucide-react';
-import { storyService, authService } from '../../services/api';
+import { storyService } from '../../services/storyService';
+import { authService } from '../../services/authService';
 import IssueDetailsDrawer from '../issues/IssueDetailsDrawer';
 import './Timeline.css';
 

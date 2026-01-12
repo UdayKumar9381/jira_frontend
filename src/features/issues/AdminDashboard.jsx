@@ -19,37 +19,31 @@ import {
     ResponsiveContainer,
     Cell
 } from 'recharts';
-import { statsService } from '../../services/api';
+import { statsService } from '../../services/statsService';
+import useFetch from '../../hooks/useFetch'; // Shared fetch logic
+import { logError } from '../../utils/renderUtils'; // Standardized logging
+import { formatDateTime } from '../../utils/dateUtils'; // Shared date formatting
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
-    const [summary, setSummary] = useState(null);
-    const [history, setHistory] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-    useEffect(() => {
-        fetchDashboardData();
-    }, [selectedMonth, selectedYear]);
+    // Centralized dashboard data fetching using shared hook
+    const { loading, execute: fetchDashboardData, data } = useFetch(async () => {
+        const [summary, history] = await Promise.all([
+            statsService.getAdminSummary({ month: selectedMonth, year: selectedYear }),
+            statsService.getModeSwitchHistory()
+        ]);
+        return { summary, history };
+    });
 
-    const fetchDashboardData = async () => {
-        try {
-            setLoading(true);
-            const [summaryData, historyData] = await Promise.all([
-                statsService.getAdminSummary({ month: selectedMonth, year: selectedYear }),
-                statsService.getModeSwitchHistory()
-            ]);
-            setSummary(summaryData);
-            setHistory(historyData);
-        } catch (err) {
-            setError('Failed to load dashboard data');
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const summary = data?.summary || null;
+    const history = data?.history || [];
+
+    useEffect(() => {
+        fetchDashboardData(); // Trigger fetch on setup or date change
+    }, [fetchDashboardData]);
 
     const months = [
         "January", "February", "March", "April", "May", "June",
@@ -58,10 +52,10 @@ const AdminDashboard = () => {
 
     const generateCurrentMonths = () => {
         const currentYear = new Date().getFullYear();
-        const currentMonth = new Date().getMonth(); // 0-indexed
+        const currentMonth = new Date().getMonth();
         const options = [];
 
-        // Show current year's months up to current
+        // Generate dropdown options for current year up to current month
         for (let i = 0; i <= currentMonth; i++) {
             options.push({ value: i + 1, label: `${months[i]} ${currentYear}` });
         }
@@ -75,16 +69,13 @@ const AdminDashboard = () => {
         </div>
     );
 
-    if (error) return <div className="admin-dashboard-error">{error}</div>;
-
     const COLORS = ['#0052cc', '#00b8d9', '#36b37e', '#ffab00'];
 
     return (
         <div className="admin-dashboard-container animate-fade-in">
-            <div className="dashboard-grid">
+            <div className="admin-dashboard-grid">
 
-                {/* Total Projects Card */}
-                <div className="dashboard-card stat-card">
+                <div className="admin-dashboard-card admin-stat-card">
                     <div className="card-icon projects-icon">
                         <Layers size={24} />
                     </div>
@@ -95,8 +86,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                {/* Week Wise Statistical Data Card */}
-                <div className="dashboard-card chart-card">
+                <div className="admin-dashboard-card chart-card">
                     <div className="card-header">
                         <div className="header-left">
                             <TrendingUp size={20} />
@@ -113,7 +103,7 @@ const AdminDashboard = () => {
                         </select>
                     </div>
                     <div className="chart-wrapper">
-                        <ResponsiveContainer width="100%" height={220}>
+                        <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={summary?.weekly_stats || []}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f4f5f7" />
                                 <XAxis
@@ -132,7 +122,7 @@ const AdminDashboard = () => {
                                     cursor={{ fill: '#f4f5f7' }}
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                                 />
-                                <Bar dataKey="projects" radius={[4, 4, 0, 0]}>
+                                <Bar dataKey="projects" radius={[4, 4, 0, 0]} barSize={40}>
                                     {(summary?.weekly_stats || []).map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={index === (summary?.weekly_stats?.length - 1) ? '#0052cc' : '#4c9aff'} />
                                     ))}
@@ -142,8 +132,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                {/* Admin Creator Details Card */}
-                <div className="dashboard-card admin-creators-card">
+                <div className="admin-dashboard-card admin-creators-card">
                     <div className="card-header">
                         <div className="header-left">
                             <Users size={20} />
@@ -168,8 +157,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                {/* Mode Switch Audit Log (History) */}
-                <div className="dashboard-card history-card full-row">
+                <div className="admin-dashboard-card history-card full-row">
                     <div className="card-header">
                         <div className="header-left">
                             <History size={20} />
@@ -210,7 +198,7 @@ const AdminDashboard = () => {
                                         <td>
                                             <div className="date-cell">
                                                 <Calendar size={12} />
-                                                {new Date(item.created_at).toLocaleDateString()}
+                                                {formatDateTime(item.created_at)} {/* Standardized date display */}
                                             </div>
                                         </td>
                                         <td className="reason-cell">

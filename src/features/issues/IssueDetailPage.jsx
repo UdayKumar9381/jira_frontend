@@ -4,7 +4,8 @@ import {
     Trash2, CheckSquare, Bookmark, AlertCircle, Edit3, ChevronLeft,
     Paperclip, Calendar, User, Flag, Layers, Users
 } from 'lucide-react';
-import { storyService, teamService } from '../../services/api';
+import { storyService } from '../../services/storyService';
+import { teamService } from '../../services/teamService';
 import usePermissions from '../../hooks/usePermissions';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';

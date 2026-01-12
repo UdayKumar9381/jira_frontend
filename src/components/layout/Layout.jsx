@@ -17,10 +17,7 @@ const Layout = () => {
     const isProjectContext = /\/projects\/\d+/.test(location.pathname);
     const shouldHideSidebar = user?.is_master_admin && !isProjectContext;
 
-    const isFullWidthPage = location.pathname.includes('/timeline') ||
-        location.pathname.includes('/board') ||
-        location.pathname.includes('/active-sprints') ||
-        shouldHideSidebar;
+    const isFullWidthPage = shouldHideSidebar;
 
     return (
         <div className="jira-layout">

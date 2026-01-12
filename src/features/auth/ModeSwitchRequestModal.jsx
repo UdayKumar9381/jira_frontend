@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Loader2 } from 'lucide-react';
-import { modeSwitchService } from '../../services/api';
+import { modeSwitchService } from '../../services/statsService';
 import { formatError } from '../../utils/renderUtils';
 import './ModeSwitchRequestModal.css';
 

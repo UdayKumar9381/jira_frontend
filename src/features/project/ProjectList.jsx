@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { projectService, storyService, authService } from '../../services/api';
+import { projectService } from '../../services/projectService';
+import { storyService } from '../../services/storyService';
+import { authService } from '../../services/authService';
 import CreateProjectModal from './CreateProjectModal';
 import CreateTeamModal from './CreateTeamModal';
 import Button from '../../components/common/Button';

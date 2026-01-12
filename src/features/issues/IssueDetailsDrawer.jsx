@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Trash2, CheckSquare, Bookmark, AlertCircle, ChevronUp, ChevronDown, Minus, Clock, User, Calendar as CalendarIcon, Info } from 'lucide-react';
-import { storyService, teamService } from '../../services/api';
+import { storyService } from '../../services/storyService';
+import { teamService } from '../../services/teamService';
 import { syncTeamMembership } from '../../utils/teamUtils';
 import usePermissions from '../../hooks/usePermissions';
 import { useAuth } from '../../context/AuthContext';

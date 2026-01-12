@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
 import {
     FileText,
     Users,
@@ -11,12 +10,16 @@ import {
     CheckCircle,
     Clock,
     Zap,
-    Plus
+    Plus,
+    Activity
 } from 'lucide-react';
-import { projectService, storyService, statsService } from '../../services/api';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import { projectService } from '../../services/projectService';
+import { storyService } from '../../services/storyService';
+import { statsService } from '../../services/statsService';
+import { formatRelativeTime } from '../../utils/dateUtils'; // Shared date formatting
+import { logError } from '../../utils/renderUtils'; // Standardized logging
 import './ProjectSummary.css';
-import { Activity } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 const ProjectSummary = () => {
     const { projectId } = useParams();
@@ -29,6 +32,7 @@ const ProjectSummary = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
+                // Batch fetch project details, issues, and activity logs
                 const [projData, issuesData, activityData] = await Promise.all([
                     projectService.getAll().then(list => list.find(p => String(p.id) === String(projectId))),
                     storyService.getByProject(projectId),
@@ -38,9 +42,9 @@ const ProjectSummary = () => {
                 setIssues(issuesData);
                 setRecentActivity(activityData);
             } catch (err) {
-                console.error("Failed to load summary data", err);
+                logError('ProjectSummaryLoad', err); // Using shared error logger
             } finally {
-                setLoading(false);
+                setLoading(false); // Stop loading regardless of outcome
             }
         };
         loadData();
@@ -55,31 +59,6 @@ const ProjectSummary = () => {
 
     const handleIssueClick = (issueId) => {
         navigate(`/projects/${projectId}/issues/${issueId}`);
-    };
-
-    const formatActivityDate = (dateString) => {
-        if (!dateString) return 'Unknown date';
-        try {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMins / 60);
-            const diffDays = Math.floor(diffHours / 24);
-
-            if (diffMins < 1) return 'Just now';
-            if (diffMins < 60) return `${diffMins}m ago`;
-            if (diffHours < 24) return `${diffHours}h ago`;
-            if (diffDays === 1) return 'Yesterday';
-            if (diffDays < 7) return `${diffDays}d ago`;
-
-            return date.toLocaleDateString(undefined, {
-                month: 'short',
-                day: 'numeric'
-            });
-        } catch (e) {
-            return 'Invalid date';
-        }
     };
 
     if (loading) return <div className="summary-loading">Gathering project insights...</div>;
@@ -158,15 +137,15 @@ const ProjectSummary = () => {
                         </div>
                         <div className="recent-list-modern">
                             {recentActivity.length > 0 ? (
-                                recentActivity.slice(0, 5).map(activity => (
-                                    <div key={activity.id} className="summary-activity-item" onClick={() => handleIssueClick(activity.issue.id)}>
+                                recentActivity.slice(0, 5).map((activity, idx) => (
+                                    <div key={idx} className="summary-activity-item" onClick={() => handleIssueClick(activity.issue.id)}>
                                         <div className="activity-meta">
                                             <div>
                                                 <span className="activity-user">{activity.actor.username}</span>
                                                 <span className="activity-action">{activity.action.toLowerCase()}</span>
                                                 an issue
                                             </div>
-                                            <span>{formatActivityDate(activity.created_at)}</span>
+                                            <span>{formatRelativeTime(activity.created_at)}</span> {/* Shared date formatting */}
                                         </div>
 
                                         <div className="activity-title">

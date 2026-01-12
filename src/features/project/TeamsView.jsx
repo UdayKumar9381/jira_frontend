@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Plus, Shield, User, Loader2, ArrowRight, AlertTriangle, RefreshCw, Trash2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { teamService, authService } from '../../services/api';
+import { teamService } from '../../services/teamService';
+import { authService } from '../../services/authService';
 import CreateTeamModal from './CreateTeamModal';
 import './ProjectSettings.css'; // Leverage existing styles
 

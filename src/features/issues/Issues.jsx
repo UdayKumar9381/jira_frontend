@@ -1,13 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import { DragDropContext } from '@hello-pangea/dnd';
-// import { useParams, useNavigate } from 'react-router-dom';
-// import { endpoints, storyService, teamService } from '../../services/api';
-// // Note: importing directly from api.js might need adjustment if default export is used differently.
-// // Adjusting to import { storyService } assuming named export as per api.js content view.
-// import SprintSection from './SprintSection';
-// import CreateSprintModal from './CreateSprintModal';
-// import { usePermissions } from '../../hooks/usePermissions';
-// import './Issues.css';
 
 // const Issues = () => {
 //     const { projectId } = useParams();
@@ -371,7 +361,8 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { useParams, useNavigate } from 'react-router-dom';
-import { storyService, teamService } from '../../services/api';
+import { storyService } from '../../services/storyService';
+import { teamService } from '../../services/teamService';
 
 import SprintSection from './SprintSection';
 import CreateSprintModal from './CreateSprintModal';

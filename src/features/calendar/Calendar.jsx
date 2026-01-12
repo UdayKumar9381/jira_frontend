@@ -13,7 +13,8 @@ import {
     ChevronDown,
     Check
 } from 'lucide-react';
-import { storyService, projectService } from '../../services/api';
+import { storyService } from '../../services/storyService';
+import { projectService } from '../../services/projectService';
 import IssueDetailsDrawer from '../issues/IssueDetailsDrawer';
 import './Calendar.css';
 

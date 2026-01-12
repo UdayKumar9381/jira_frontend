@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Edit2, User as UserIcon } from 'lucide-react';
-import { adminService } from '../../services/api';
+import { adminService } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 import ChangeRoleModal from './ChangeRoleModal';
 import AdminProjects from './AdminProjects';

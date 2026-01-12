@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, User as UserIcon, Save, Users } from 'lucide-react';
-import { teamService, adminService } from '../../services/api';
+import { teamService } from '../../services/teamService';
+import { adminService } from '../../services/authService';
 import './ManageTeamsModal.css';
 
 const ManageTeamsModal = ({ project, onClose }) => {

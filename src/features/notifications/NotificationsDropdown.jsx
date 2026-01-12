@@ -1,72 +1,54 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, Check, Clock } from 'lucide-react';
-import { notificationService } from '../../services/api';
+import { notificationService } from '../../services/notificationService';
+import useFetch from '../../hooks/useFetch'; // Shared fetch logic
+import { formatDateTime } from '../../utils/dateUtils'; // Shared date formatting
+import { logError } from '../../utils/renderUtils'; // Standardized logging
 import './NotificationsDropdown.css';
-
 const NotificationsDropdown = ({ userId, isOpen, onClose, onUnreadCountChange }) => {
-    const [notifications, setNotifications] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
+    // Use shared hook for notification fetching
+    const {
+        data: notifications = [],
+        loading,
+        execute: fetchNotifications,
+        setData: setNotifications
+    } = useFetch(() => notificationService.getNotifications(userId));
 
     useEffect(() => {
+        // Fetch when dropdown is opened
         if (isOpen && userId && typeof userId === 'number') {
             fetchNotifications();
         }
-    }, [isOpen, userId]);
+    }, [isOpen, userId, fetchNotifications]);
 
-    // Initial fetch to show badge count
     useEffect(() => {
+        // Initial fetch for count badge
         if (userId && typeof userId === 'number') {
-            fetchNotifications(true);
+            fetchNotifications();
         }
-    }, [userId]);
+    }, [userId, fetchNotifications]);
 
-    const fetchNotifications = async (silent = false) => {
-        if (!silent) setLoading(true);
-        try {
-            const data = await notificationService.getNotifications(userId);
-            setNotifications(data);
-            const unreadCount = data.filter(n => !n.is_read).length;
-            if (onUnreadCountChange) onUnreadCountChange(unreadCount);
-        } catch (error) {
-            console.error("Failed to fetch notifications:", error);
-        } finally {
-            if (!silent) setLoading(false);
-        }
-    };
+    // Sync unread count with parent Navbar
+    useEffect(() => {
+        const unreadCount = notifications.filter(n => !n.is_read).length;
+        if (onUnreadCountChange) onUnreadCountChange(unreadCount);
+    }, [notifications, onUnreadCountChange]);
 
     const handleMarkAsRead = async (id) => {
         try {
             await notificationService.markAsRead(id);
+            // Optimistically update local state
             setNotifications(prev => prev.map(n =>
                 n.id === id ? { ...n, is_read: true } : n
             ));
-
-            // Update parent unread count
-            const newNotifications = notifications.map(n =>
-                n.id === id ? { ...n, is_read: true } : n
-            );
-            const unreadCount = newNotifications.filter(n => !n.is_read).length;
-            if (onUnreadCountChange) onUnreadCountChange(unreadCount);
         } catch (error) {
-            console.error("Failed to mark notification as read:", error);
+            logError('DropdownMarkRead', error); // Shared error logger
         }
     };
 
-    const formatTime = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString + 'Z'); // Ensure UTC parsing if standard ISO string
-        // Fallback if Date is invalid
-        if (isNaN(date.getTime())) return dateString;
-
-        return date.toLocaleString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-        });
-    };
 
     if (!isOpen) return null;
 
@@ -107,7 +89,7 @@ const NotificationsDropdown = ({ userId, isOpen, onClose, onUnreadCountChange })
                                 </div>
                                 <div className="notification-time">
                                     <Clock size={12} />
-                                    <span>{formatTime(notification.created_at)}</span>
+                                    <span>{formatDateTime(notification.created_at)}</span> {/* Using shared date utility */}
                                 </div>
                             </div>
                             {!notification.is_read && (
@@ -128,7 +110,15 @@ const NotificationsDropdown = ({ userId, isOpen, onClose, onUnreadCountChange })
             </div>
 
             <div className="notifications-footer">
-                <button className="view-all-btn">View all notifications</button>
+                <button
+                    className="view-all-btn"
+                    onClick={() => {
+                        navigate('/notifications');
+                        onClose();
+                    }}
+                >
+                    View all notifications
+                </button>
             </div>
         </div>
     );

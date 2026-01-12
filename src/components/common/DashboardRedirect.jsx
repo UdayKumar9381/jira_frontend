@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { projectService } from '../../services/api';//importing projectService from api.js
+import { projectService } from '../../services/projectService';
 
 const DashboardRedirect = () => {
     const navigate = useNavigate();

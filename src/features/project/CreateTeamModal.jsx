@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Users, Shield, UserPlus, CheckCircle, AlertTriangle } from 'lucide-react';
-import { teamService } from '../../services/api';
+import { teamService } from '../../services/teamService';
 
 const CreateTeamModal = ({ projectId, onClose, onSuccess, users }) => {
     const [formData, setFormData] = useState({

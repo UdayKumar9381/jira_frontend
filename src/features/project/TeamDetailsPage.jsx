@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Users, ArrowLeft, UserPlus, Trash2, Shield, Loader2, X, CheckCircle, Mail } from 'lucide-react';
-import { teamService, authService } from '../../services/api';
+import { teamService } from '../../services/teamService';
+import { authService } from '../../services/authService';
 import { usePermissions } from '../../hooks/usePermissions';
 import { useAuth } from '../../context/AuthContext';
 import './TeamDetailsPage.css';

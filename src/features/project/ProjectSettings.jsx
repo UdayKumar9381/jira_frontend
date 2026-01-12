@@ -8,7 +8,7 @@ import {
     ToggleLeft,
     ToggleRight
 } from 'lucide-react';
-import { projectService } from '../../services/api';
+import { projectService } from '../../services/projectService';
 import './ProjectSettings.css';
 
 const ProjectSettings = () => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Check, X, Loader2, MessageSquare } from 'lucide-react';
-import { modeSwitchService } from '../../services/api';
+import { modeSwitchService } from '../../services/statsService';
 import './ModeSwitchResponses.css';
 
 const ModeSwitchResponses = ({ onActionSuccess }) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Loader2 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import { projectService } from '../../services/api';
+import { projectService } from '../../services/projectService';
 import TeamsView from './TeamsView';
 import './ProjectSettings.css';
 

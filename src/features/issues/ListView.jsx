@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { storyService, teamService } from '../../services/api';
+import { storyService } from '../../services/storyService';
+import { teamService } from '../../services/teamService';
 import { AlertCircle, Bookmark, CheckSquare, ChevronUp, ChevronDown, Minus, Search, List, Filter } from 'lucide-react';
 import { usePermissions } from '../../hooks/usePermissions';
 import './ListView.css';

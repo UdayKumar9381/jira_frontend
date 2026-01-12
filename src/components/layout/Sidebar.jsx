@@ -22,7 +22,7 @@ import {
     Users // Teams
 } from 'lucide-react';
 import { NavLink, useParams, useLocation } from 'react-router-dom';
-import { projectService } from '../../services/api';
+import { projectService } from '../../services/projectService';
 import { useAuth } from '../../context/AuthContext';
 import './Sidebar.css';
 

@@ -20,3 +20,8 @@
 .jira-main-content.collapsed {
     margin-left: 64px;
 }
+
+.jira-main-content.full-width {
+    margin-left: 0;
+    width: 100%;
+}

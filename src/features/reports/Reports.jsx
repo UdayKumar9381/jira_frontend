@@ -13,7 +13,7 @@ import {
     ChevronDown,
     Minus
 } from 'lucide-react';
-import { storyService } from '../../services/api';
+import { storyService } from '../../services/storyService';
 import './Reports.css';
 
 const Reports = () => {

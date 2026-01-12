@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { authService } from '../../services/api';
+import { authService } from '../../services/authService';
 import { Camera, Edit2, Save, X, Loader2, User } from 'lucide-react';
 import { formatError } from '../../utils/renderUtils';
 import ModeSwitchRequestModal from './ModeSwitchRequestModal';

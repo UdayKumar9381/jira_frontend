@@ -45,7 +45,7 @@ export default function Login() {
                             <img src={kietLogo} alt="KIET" className="jira-logo-img" />
                             <span className="jira-logo-text">KIET</span>
                         </div>
-                        <div className="jira-sub-header">Project Suite</div>
+                        <div className="jira-sub-header">Jira</div>
                     </div>
                 </div>
             </div>
@@ -69,7 +69,7 @@ export default function Login() {
 
                 <div className="jira-form-card">
                     <h2 className="jira-card-header">Log in</h2>
-                    <p className="jira-card-sub-header">Continue to KIET Project Suite</p>
+                    <p className="jira-card-sub-header">Continue to KIET Jira</p>
 
                     {message && <div className="jira-auth-success-toast">{message}</div>}
                     {error && <div className="jira-auth-error-toast">{error}</div>}

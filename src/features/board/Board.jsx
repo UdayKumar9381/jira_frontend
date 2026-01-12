@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { useParams, useNavigate } from 'react-router-dom';
-import { storyService, projectService, teamService } from '../../services/api';
+import { storyService } from '../../services/storyService';
+import { projectService } from '../../services/projectService';
+import { teamService } from '../../services/teamService';
 import { useAuth } from '../../context/AuthContext';
 import BoardColumn from './BoardColumn';
 import CreateIssueModal from './CreateIssueModal';
@@ -85,10 +87,10 @@ const Board = () => {
     };
 
     // Separate Epics and standard issues, applying filters to BOTH
-    const epics = issues.filter(i => 
+    const epics = issues.filter(i =>
         (i.issue_type || '').toUpperCase() === 'EPIC' && isMatch(i)
     );
-    
+
     const tasks = issues.filter(i => (i.issue_type || '').toUpperCase() !== 'EPIC');
 
     // Filter tasks for the board
@@ -216,7 +218,7 @@ const Board = () => {
             )}
 
             <main className="jira-board-canvas" style={{ flexDirection: 'column', gap: '20px' }}>
-                
+
                 {/* 1. EPICS SECTION */}
                 <div className="epics-panel-section">
                     <div className="epics-panel-header">
@@ -249,7 +251,7 @@ const Board = () => {
                                 isDragDisabled={!canDragDrop()}
                                 issues={boardColumns[status] || []}
                                 teams={teams}
-                                showHeader={true} 
+                                showHeader={true}
                                 onIssueClick={(issue) => navigate(`/projects/${projectId}/issues/${issue.id}`)}
                             />
                         ))}
