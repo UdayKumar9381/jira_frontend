@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { storyService, teamService } from '../../services/api';
 import usePermissions from '../../hooks/usePermissions';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';
 import IssueDetailModal from '../board/IssueDetailModal';
 import ActivityLog from './ActivityLog';
@@ -14,6 +15,7 @@ import './IssueDetailPage.css';
 const IssueDetailPage = () => {
     const { projectId, issueId } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [issue, setIssue] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +43,11 @@ const IssueDetailPage = () => {
                 .catch(err => console.error("Failed to fetch teams", err));
         }
     }, [issueId, projectId]);
+
+    // [NEW] Check if user is Team Lead for this issue's team
+    const selectedTeam = teams.find(t => String(t.id) === String(issue?.team_id));
+    const isTeamLead = selectedTeam?.lead_id === user?.id;
+    const canEdit = issue && (canEditIssue(issue) || isTeamLead);
 
     const handleIssueUpdated = () => {
         fetchIssue();
@@ -101,7 +108,7 @@ const IssueDetailPage = () => {
                     <h1 className="issue-title">{issue.title}</h1>
                 </div>
                 <div className="header-actions">
-                    {canEditIssue(issue) && (
+                    {canEdit && (
                         <Button variant="subtle" onClick={() => setIsEditModalOpen(true)}>
                             <Edit3 size={16} style={{ marginRight: '8px' }} />
                             Edit

@@ -149,6 +149,55 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
 
   const handleFileChange = e => setFile(e.target.files[0]);
 
+  // Determine permissions for the selected team
+  const selectedTeam = teams.find(t => t.id == formData.team_id);
+  const isTeamLead = (selectedTeam?.lead_id == user?.id) || (selectedTeam?.lead?.id == user?.id);
+
+  // Check if user is a lead of ANY team in this project (Project Lead)
+  const isProjectLead = teams.some(t => (t.lead_id == user?.id) || (t.lead?.id == user?.id));
+
+  const isAdmin = user?.view_mode === 'ADMIN';
+
+  // Logic: Allow assignment if Admin OR Team Lead OR Project Lead.
+  const canAssignOthers = isAdmin || isTeamLead || isProjectLead;
+
+  // Debug permissions
+  useEffect(() => {
+    // Only log if permissions are restrictive and user is present
+    if (user) {
+      console.log('[CreateIssueModal] Permission Check:', {
+        activeProjectId,
+        teamId: formData.team_id,
+        userId: user.id,
+        isTeamLead,
+        isProjectLead,
+        isAdmin,
+        canAssignOthers
+      });
+    }
+  }, [formData.team_id, isTeamLead, isProjectLead, isAdmin, user]);
+
+  // Enforce self-assignment for non-leads when team is selected
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // If I'm not allowed to assign others, force assignee to myself
+    if (!canAssignOthers && user) {
+      setFormData(prev => {
+        // Only update if not already set to self (to avoid infinite loop if user changes)
+        if (prev.assignee_id !== user.id) {
+          return {
+            ...prev,
+            assignee_id: user.id,
+            assignee: user.username
+          };
+        }
+        return prev;
+      });
+    }
+  }, [formData.team_id, canAssignOthers, user, isOpen, isProjectLead]);
+
+
   const handleAssigneeChange = (e) => {
     const rawValue = e.target.value;
     const userId = rawValue ? parseInt(rawValue, 10) : '';
@@ -391,8 +440,9 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     className="jira-select-premium"
                     value={formData.assignee_id}
                     onChange={handleAssigneeChange}
+                    disabled={!canAssignOthers} // Disable if not allowed to assign others
                   >
-                    <option value="">Unassigned</option>
+                    <option value="">{canAssignOthers ? "Unassigned" : "Assigned to me"}</option>
                     {users.map(u => <option key={u.id} value={u.id}>{u.username}</option>)}
                   </select>
                 </div>
@@ -408,6 +458,12 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
                     <option value="">No Team</option>
                     {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                   </select>
+                  {teams.length === 0 && (
+                    <div className="warning-box" style={{ padding: '8px', background: '#ffebe6', color: '#de350b', borderRadius: '3px', marginTop: '8px', fontSize: '11px', lineHeight: '1.4' }}>
+                      <AlertCircle size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-top' }} />
+                      No teams found in this project. You must create a team first.
+                    </div>
+                  )}
                 </div>
 
                 <div className="sidebar-field">
@@ -457,7 +513,7 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
               type="submit"
               form="create-issue-form"
               variant="primary"
-              disabled={isLoading}
+              disabled={isLoading || (teams.length === 0 && !fetchingParents)} // Disable if no teams
               className="create-submit-btn"
             >
               {isLoading ? 'Creating…' : (createAnother ? 'Create & Add Another' : 'Create')}

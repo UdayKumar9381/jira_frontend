@@ -25,6 +25,12 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
     const { canUpdateStatus, canEditIssue, canDeleteIssue, canEditTeamField, isIssueReadOnly } = usePermissions();
     const [teams, setTeams] = useState([]);
 
+    // [NEW] Check if user is a Team Lead for this issue's team
+    const selectedTeam = teams.find(t => t.id === (formData.team_id ? Number(formData.team_id) : (issue ? issue.team_id : null)));
+    const isTeamLead = selectedTeam?.lead_id === user?.id; // Assumes user.id and team.lead_id are comparable
+    // Allow edit if standard permission OK OR if user is Team Lead
+    const isReadOnly = isIssueReadOnly(issue) && !isTeamLead;
+
     const [isLoading, setIsLoading] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
 
@@ -163,7 +169,7 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
                             onChange={(e) => handleChange('title', e.target.value)}
                             placeholder="What needs to be done?"
                             rows={1}
-                            disabled={isIssueReadOnly(issue)}
+                            disabled={isReadOnly}
                         />
                     </div>
 
@@ -174,7 +180,7 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
                             value={formData.description}
                             onChange={(e) => handleChange('description', e.target.value)}
                             placeholder="Add a more detailed description..."
-                            disabled={isIssueReadOnly(issue)}
+                            disabled={isReadOnly}
                         />
                     </div>
 
@@ -220,7 +226,7 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
                                         value={formData.assignee}
                                         onChange={(e) => handleChange('assignee', e.target.value)}
                                         placeholder="Unassigned"
-                                        disabled={isIssueReadOnly(issue)}
+                                        disabled={isReadOnly}
                                     />
                                 </div>
                             </div>
@@ -233,7 +239,7 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
                                         className="detail-select"
                                         value={formData.priority}
                                         onChange={(e) => handleChange('priority', e.target.value)}
-                                        disabled={isIssueReadOnly(issue)}
+                                        disabled={isReadOnly}
                                     >
                                         <option value="High">High</option>
                                         <option value="Medium">Medium</option>
@@ -267,7 +273,7 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
                                     value={formData.story_points}
                                     onChange={(e) => handleChange('story_points', e.target.value)}
                                     placeholder="None"
-                                    disabled={isIssueReadOnly(issue)}
+                                    disabled={isReadOnly}
                                 />
                             </div>
                         </div>
@@ -283,7 +289,7 @@ const IssueDetailsDrawer = ({ issue, onClose, onUpdate, onDelete }) => {
                                     className="detail-date"
                                     value={formData.start_date}
                                     onChange={(e) => handleChange('start_date', e.target.value)}
-                                    disabled={isIssueReadOnly(issue)}
+                                    disabled={isReadOnly}
                                 />
                             </div>
                             <div className="detail-item">

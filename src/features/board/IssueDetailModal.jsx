@@ -15,7 +15,13 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
     const [error, setError] = useState(null);
     const [users, setUsers] = useState([]);
     const [teams, setTeams] = useState([]);
-    const { canEditIssue, canDeleteIssue, canEditTeamField, isIssueReadOnly, isTeamLead } = usePermissions();
+    const { canEditIssue, canDeleteIssue, canEditTeamField, isIssueReadOnly, isTeamLead: isRoleTeamLead } = usePermissions();
+
+    // [NEW] Check if user is the lead of the currently selected team
+    const selectedTeam = teams.find(t => t.id === (formData.team_id ? Number(formData.team_id) : (issue ? issue.team_id : null)));
+    const isCurrentTeamLead = selectedTeam?.lead_id === user?.id;
+    // Allow edit if standard permission OK OR if user is Team Lead of this team
+    const isReadOnly = isIssueReadOnly(issue) && !isCurrentTeamLead;
 
     useEffect(() => {
         // Fetch users for assignee dropdown
@@ -28,7 +34,7 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                 .then(projectTeams => {
                     setTeams(projectTeams);
                     // If team_id is missing and user is Team Lead, pre-select if they lead only one team
-                    if (!issue.team_id && isTeamLead()) {
+                    if (!issue.team_id && isRoleTeamLead()) {
                         const ledTeams = projectTeams.filter(t => String(t.lead_id) === String(user?.id));
                         if (ledTeams.length === 1) {
                             setFormData(prev => ({ ...prev, team_id: ledTeams[0].id }));
@@ -78,7 +84,8 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
         e.preventDefault();
 
         // Permission check
-        if (!canEditIssue(issue)) {
+        const canEdit = canEditIssue(issue) || isCurrentTeamLead;
+        if (!canEdit) {
             alert("You do not have permission to edit this issue.");
             return;
         }
@@ -200,7 +207,7 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                             value={formData.status || ''}
                             onChange={handleChange}
                             required
-                            disabled={isIssueReadOnly(issue)}
+                            disabled={isReadOnly}
                         >
                             <option value="To Do">To Do</option>
                             <option value="In Progress">In Progress</option>
@@ -215,7 +222,7 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                             name="priority"
                             value={formData.priority || ''}
                             onChange={handleChange}
-                            disabled={isIssueReadOnly(issue)}
+                            disabled={isReadOnly}
                         >
                             <option value="High">High</option>
                             <option value="Medium">Medium</option>
@@ -232,8 +239,8 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                             value={formData.assignee_id || ''}
                             onChange={handleAssigneeChange}
                             required
-                            disabled={isIssueReadOnly(issue) || user?.role === 'DEVELOPER'}
-                            style={{ backgroundColor: (isIssueReadOnly(issue) || user?.role === 'DEVELOPER') ? '#f4f5f7' : '#fff', color: (isIssueReadOnly(issue) || user?.role === 'DEVELOPER') ? '#a5adba' : '#172b4d' }}
+                            disabled={isReadOnly || user?.role === 'DEVELOPER'}
+                            style={{ backgroundColor: (isReadOnly || user?.role === 'DEVELOPER') ? '#f4f5f7' : '#fff', color: (isReadOnly || user?.role === 'DEVELOPER') ? '#a5adba' : '#172b4d' }}
                         >
                             <option value="">Select assignee...</option>
                             {users.map(user => (
@@ -269,7 +276,7 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                             name="start_date"
                             value={formData.start_date || ''}
                             onChange={handleChange}
-                            disabled={isIssueReadOnly(issue)}
+                            disabled={isReadOnly}
                         />
                     </div>
                     <div className="jira-input-group">
@@ -280,7 +287,7 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
                             name="end_date"
                             value={formData.end_date || ''}
                             onChange={handleChange}
-                            disabled={isIssueReadOnly(issue)}
+                            disabled={isReadOnly}
                         />
                     </div>
                 </div>
@@ -333,7 +340,7 @@ const IssueDetailModal = ({ isOpen, onClose, issue, onIssueUpdated, onIssueDelet
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: 24 }}>
                     <Button type="button" variant="subtle" onClick={onClose}>Cancel</Button>
-                    {!isIssueReadOnly(issue) && (
+                    {!isReadOnly && (
                         <Button type="submit" variant="primary" disabled={isLoading}>Save Changes</Button>
                     )}
                 </div>
