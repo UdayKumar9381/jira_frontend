@@ -33,7 +33,7 @@ const NotificationsDropdown = ({ userId, isOpen, onClose, onUnreadCountChange })
 
     // Sync unread count with parent Navbar
     useEffect(() => {
-        const unreadCount = notifications.filter(n => !n.is_read).length;
+        const unreadCount = (notifications || []).filter(n => !n.is_read).length;
         if (onUnreadCountChange) onUnreadCountChange(unreadCount);
     }, [notifications, onUnreadCountChange]);
 

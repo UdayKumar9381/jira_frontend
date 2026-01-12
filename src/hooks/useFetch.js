@@ -1,19 +1,26 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 /**
  * Custom hook to encapsulate the repetitive loading, error, and data state logic.
- * reduces boilerplate in components that only need simple data fetching.
+ * Reduces boilerplate in components that only need simple data fetching.
+ * Uses a ref for fetchFunction to maintain a stable 'execute' function identity.
  */
 const useFetch = (fetchFunction) => {
-    const [data, setData] = useState(null);
+    const [data, setData] = useState(undefined); // Start with undefined to trigger default parameters
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // Use a ref to store the latest fetchFunction to avoid identity changes in 'execute'
+    const fetchFunctionRef = useRef(fetchFunction);
+    useEffect(() => {
+        fetchFunctionRef.current = fetchFunction;
+    }, [fetchFunction]);
 
     const execute = useCallback(async (...args) => {
         setLoading(true);
         setError(null);
         try {
-            const result = await fetchFunction(...args);
+            const result = await fetchFunctionRef.current(...args);
             setData(result);
             return result;
         } catch (err) {
@@ -24,7 +31,7 @@ const useFetch = (fetchFunction) => {
         } finally {
             setLoading(false);
         }
-    }, [fetchFunction]);
+    }, []); // Identity remains stable across renders
 
     return { data, loading, error, execute, setData };
 };

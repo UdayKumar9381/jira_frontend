@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Bell, Check, Clock, Filter, CheckCircle2, Inbox } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { notificationService } from '../../services/notificationService';
@@ -47,7 +48,7 @@ const NotificationsPage = () => {
         }
     };
 
-    const filteredNotifications = notifications.filter(n => {
+    const filteredNotifications = (notifications || []).filter(n => {
         if (filter === 'unread') return !n.is_read;
         return true;
     });

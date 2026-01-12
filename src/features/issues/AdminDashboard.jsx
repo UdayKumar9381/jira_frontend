@@ -43,7 +43,7 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         fetchDashboardData(); // Trigger fetch on setup or date change
-    }, [fetchDashboardData]);
+    }, [fetchDashboardData, selectedMonth, selectedYear]);
 
     const months = [
         "January", "February", "March", "April", "May", "June",
