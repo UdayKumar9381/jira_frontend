@@ -150,13 +150,16 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
   const handleFileChange = e => setFile(e.target.files[0]);
 
   const handleAssigneeChange = (e) => {
-    const userId = e.target.value;
-    const selected = users.find(u => String(u.id) === userId);
+    const rawValue = e.target.value;
+    const userId = rawValue ? parseInt(rawValue, 10) : '';
+    const selected = users.find(u => u.id === userId);
     setFormData(prev => ({
       ...prev,
       assignee_id: userId || '',
       assignee: selected ? selected.username : ''
     }));
+
+    console.debug('Assignee selected', { rawValue, parsedId: userId, selected });
   };
 
   const handleSubmit = async (e) => {
@@ -165,10 +168,14 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
     setError(null);
 
     try {
+      const assigned_to_value = (typeof formData.assignee_id === 'number' && !Number.isNaN(formData.assignee_id))
+        ? formData.assignee_id
+        : (formData.assignee_id ? parseInt(formData.assignee_id, 10) : null);
+
       const payload = {
         ...formData,
         project_id: activeProjectId || (formData.project_id ? parseInt(formData.project_id) : null),
-        assigned_to: formData.assignee_id ? parseInt(formData.assignee_id) : null,
+        assigned_to: assigned_to_value || null,
         team_id: formData.team_id ? parseInt(formData.team_id) : null,
         story_pointer: 0,
         support_doc: file,
@@ -176,12 +183,15 @@ const CreateIssueModal = ({ isOpen, onClose, projectId, onIssueCreated, initialD
         end_date: formData.end_date || null
       };
 
-      await storyService.create(payload);
-
-      // Sync team membership if assignee and team are selected
+      // Ensure assignee is part of the team *before* creating the issue. Some backend logic
+      // may reject or override assigned_to if the user is not a member of the selected team.
       if (payload.team_id && payload.assigned_to) {
+        console.debug('Syncing team membership before create', { team_id: payload.team_id, assigned_to: payload.assigned_to });
         await syncTeamMembership(payload.team_id, payload.assigned_to);
       }
+
+      console.debug('Create issue payload:', payload);
+      await storyService.create(payload);
 
       onIssueCreated();
 
